@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     whoop_redirect_uri: AnyHttpUrl = Field(..., env="WHOOP_REDIRECT_URI")
     whoop_auth_url: AnyHttpUrl = Field(..., env="WHOOP_AUTH_URL")
     whoop_token_url: AnyHttpUrl = Field(..., env="WHOOP_TOKEN_URL")
+    whoop_scope: str = Field(..., env="WHOOP_SCOPE")
     db_url: str = Field(..., env="DB_URL")
 
     class Config:
@@ -18,6 +19,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-
-WHOOP_SCOPES = "read:recovery read:cycles read:sleep read:workout read:profile read:body_measurement"
