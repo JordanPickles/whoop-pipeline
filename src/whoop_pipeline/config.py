@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     whoop_auth_url: AnyHttpUrl = Field(..., env="WHOOP_AUTH_URL")
     whoop_token_url: AnyHttpUrl = Field(..., env="WHOOP_TOKEN_URL")
     whoop_scope: str = Field(..., env="WHOOP_SCOPE")
+    whoop_api_base_url: AnyHttpUrl = Field(..., env="WHOOP_AUTH_URL")
     db_url: str = Field(..., env="DB_URL")
 
     class Config:
