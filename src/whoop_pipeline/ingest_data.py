@@ -3,64 +3,92 @@ import json
 from whoop_pipeline.config import settings
 from whoop_pipeline.auth import WhoopClient
 import pandas as pd
+import time
 
 
 
 
 
 class WhoopDataIngestor():
-    def __init__(self, access_token: str):
+    def __init__(self, access_token:str):
         self.access_token = access_token
         self.base_url = settings.whoop_api_base_url
         
         
 
-    def get_recovery_data(self, start, end) -> pd.DataFrame:
-        """Fetch recovery data from Whoop API."""
+    def get_json(self, base_url:str, endpoint:str, params:dict, token:str):
+        
 
-        access_token = self.access_token
-        response_json_list = []
-
-        endpoint = f"{self.base_url}recovery?start={start}&end={end}"
+        url = f"{self.base_url}{endpoint}"
         headers = {
-            "Authorization": f"Bearer {access_token}"
+            "Authorization": f"Bearer {self.access_token}"
             , "Accept": "application/json"
         }  
-        response = requests.get(endpoint, headers=headers)
+        
+        response = requests.get(url, headers=headers, params=params)
         response.raise_for_status()
         response_json = response.json()
-        records = response_json.get("records", [])
-        response_json_list.extend(records)
-        next_access_token = response_json.get("next_token")
+        
+        return response_json
+    
+    def paginator(self, json_data: dict, endpoint: str, start:str, end:str, ) -> pd.DataFrame:
+        
+
+        response_json_list = [json_data.get("records", [])]
+        next_access_token = json_data.get("next_token")
 
         while next_access_token is not None:
             
+            
             print("Fetching next page of data with token:", next_access_token)
-            endpoint = f"{self.base_url}recovery?nextToken={next_access_token}&start={start}&end={end}"
+            url = f"{self.base_url}{endpoint}"
+        
             headers = {
-                "Authorization": f"Bearer {access_token}"
+                "Authorization": f"Bearer {self.access_token}"
                 , "Accept": "application/json"
             }   
+            params = {'nextToken': next_access_token,
+                'start': start,
+                'end': end}
         
-            response = requests.get(endpoint, headers=headers)
+            response = requests.get(url, headers=headers, params=params)
             response.raise_for_status()
             response_json = response.json()
             records = response_json.get("records", [])
-
             response_json_list.extend(records)
 
             next_access_token = response_json.get("next_token")
+
+        df =  pd.json_normalize(response_json_list)
+        return df
+
+
+    def data_retrieval(self, start:str, end:str):
+        endpoints = ['recovery', 'activity/sleep']   
+        params = {'start': start, 'end': end}
+
+        for endpoint in endpoints: 
+            json_data = self.get_json(self.base_url, endpoint, params, self.access_token)   
+            df = self.paginator(json_data, endpoint, params['start'], params['end'])
+            endpoint = endpoint.replace('/', '_')
+            df.to_csv(f"{endpoint}_data.csv", index=False)
         
-        df_recovery =  pd.json_normalize(response_json_list)
-        
-        return df_recovery
+
+
+
 
 if __name__ == '__main__':
     whoop_client = WhoopClient()
-    
-    tokens = whoop_client.load_tokens()
-    access_token = tokens['access_token']
-    whoop_ingestor = WhoopDataIngestor(access_token)
 
-    recovery_data = whoop_ingestor.get_recovery_data('2025-08-14T00:00:00.000Z', '2025-08-27T00:00:00.000Z')
-    print(recovery_data)
+    tokens = whoop_client.load_tokens()
+
+    if tokens.get("expires_at", 0) <= int(time.time()):
+        tokens = whoop_client.authorisation()
+        tokens = whoop_client.load_tokens()
+
+
+ 
+    whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0))
+
+    whoop_ingestor.data_retrieval('2025-08-14T00:00:00.000Z', '2025-08-27T00:00:00.000Z')
+   
