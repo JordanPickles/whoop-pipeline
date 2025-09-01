@@ -6,3 +6,4 @@ __pycache__/
 *.parquet
 *.db
 .secrets
+*.csv
