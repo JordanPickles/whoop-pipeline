@@ -6,18 +6,14 @@ import pandas as pd
 import time
 
 
-
-
-
 class WhoopDataIngestor():
     def __init__(self, access_token:str):
         self.access_token = access_token
         self.base_url = settings.whoop_api_base_url
         
-        
 
-    def get_json(self, base_url:str, endpoint:str, params:dict, token:str):
-        
+    def get_json(self, base_url:str, endpoint:str, params:dict) -> dict:
+        """Fetches JSON data from the Whoop API."""
 
         url = f"{self.base_url}{endpoint}"
         headers = {
@@ -32,9 +28,10 @@ class WhoopDataIngestor():
         return response_json
     
     def paginator(self, json_data: dict, endpoint: str, start:str, end:str, ) -> pd.DataFrame:
-        
+        """Handles pagination for Whoop API responses."""
 
-        response_json_list = [json_data.get("records", [])]
+        data = json_data["records"]
+        response_json_list = [data]
         next_access_token = json_data.get("next_token")
 
         while next_access_token is not None:
@@ -54,24 +51,26 @@ class WhoopDataIngestor():
             response = requests.get(url, headers=headers, params=params)
             response.raise_for_status()
             response_json = response.json()
-            records = response_json.get("records", [])
+            records = response_json["records"]
             response_json_list.extend(records)
 
             next_access_token = response_json.get("next_token")
-
-        df =  pd.json_normalize(response_json_list)
+        
+        df =  pd.json_normalize(response_json_list[0])
         return df
 
 
     def data_retrieval(self, start:str, end:str):
-        endpoints = ['recovery', 'activity/sleep']   
+        """Retrieves data from Whoop API and saves to CSV files."""
+
+        endpoints = {'recovery': 'recovery', 'sleep':'activity/sleep', 'workout': 'activity/workout'}  
         params = {'start': start, 'end': end}
 
-        for endpoint in endpoints: 
+        for endpoint in endpoints.values(): 
             json_data = self.get_json(self.base_url, endpoint, params, self.access_token)   
             df = self.paginator(json_data, endpoint, params['start'], params['end'])
             endpoint = endpoint.replace('/', '_')
-            df.to_csv(f"{endpoint}_data.csv", index=False)
+            df.to_csv(f"data/{endpoint}_data.csv", index=False)
         
 
 
