@@ -15,7 +15,7 @@ class Base(DeclarativeBase):
 
 class Sleep(Base):
     __tablename__ = 'fact_activity_sleep'
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[str] = mapped_column(VARCHAR, primary_key=True)
     cycle_id: Mapped[int]
     v1_id: Mapped[int]
     user_id: Mapped[int]
@@ -23,7 +23,7 @@ class Sleep(Base):
     updated_at: Mapped[DateTime]
     start: Mapped[DateTime]
     end: Mapped[DateTime]
-    timezone_offset: Mapped[str]
+    timezone_offset: Mapped[int]
     nap: Mapped[bool]
     score_state: Mapped[str]
     score_stage_summary_total_in_bed_time_milli: Mapped[int]

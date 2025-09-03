@@ -15,7 +15,7 @@ class WhoopDataCleaner():
         
         df['timezone_offset'] = df['timezone_offset'].apply(self.tz_offset_to_minutes)
 
-        int_cols = [col for col in df.columns if col.endswith("milli") or col.endswith("count") or col.endswith("id")] # lists all columns ending with milli to be converted to in
+        int_cols = [col for col in df.columns if col.endswith("milli") or col.endswith("count") or col.endswith("_id")] # lists all columns ending with milli to be converted to in
         for col in int_cols:
             df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
 

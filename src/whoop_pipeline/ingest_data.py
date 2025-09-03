@@ -34,7 +34,8 @@ class WhoopDataIngestor():
         """Handles pagination for Whoop API responses."""
 
         data = json_data["records"]
-        response_json_list = [data]
+        response_json_list = []
+        response_json_list.extend(data)
         next_access_token = json_data.get("next_token")
 
         while next_access_token is not None:
@@ -58,8 +59,9 @@ class WhoopDataIngestor():
             response_json_list.extend(records)
 
             next_access_token = response_json.get("next_token")
+
+        df =  pd.json_normalize(response_json_list)
         
-        df =  pd.json_normalize(response_json_list[0])
         return df
 
 
@@ -73,8 +75,7 @@ class WhoopDataIngestor():
         for endpoint_key, endpoint_value in endpoints.items(): 
             json_data = self.get_json(self.base_url, endpoint_value, params)   
             df = self.paginator(json_data, endpoint_value, params['start'], params['end'])
-            endpoint_value = endpoint_value.replace('/', '_')
-            if endpoint_value == 'activity_sleep':
+            if endpoint_value == 'activity/sleep':
                 df = self.whoop_data_cleaner.clean_sleep_data(df)
 
             df.to_csv(f"data/{endpoint_key}_data.csv", index=False)
@@ -97,6 +98,6 @@ if __name__ == '__main__':
 
     whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0))
 
-    whoop_db.create_tables()
-    sleep_data = whoop_ingestor.data_pipeline('2025-08-14T00:00:00.000Z', '2025-09-02T00:00:00.000Z')
+    # whoop_db.create_tables()
+    sleep_data = whoop_ingestor.data_pipeline('2025-05-01T00:00:00.000Z', '2025-09-02T00:00:00.000Z')
    
