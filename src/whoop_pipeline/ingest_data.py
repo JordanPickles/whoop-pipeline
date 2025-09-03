@@ -2,6 +2,8 @@ import requests
 import json
 from whoop_pipeline.config import settings
 from whoop_pipeline.auth import WhoopClient
+from whoop_pipeline.database import WhoopDB
+from whoop_pipeline.data_cleaning import WhoopDataCleaner
 import pandas as pd
 import time
 
@@ -10,7 +12,8 @@ class WhoopDataIngestor():
     def __init__(self, access_token:str):
         self.access_token = access_token
         self.base_url = settings.whoop_api_base_url
-        
+        self.whoop_data_cleaner = WhoopDataCleaner()
+        self.whoop_database = WhoopDB()
 
     def get_json(self, base_url:str, endpoint:str, params:dict) -> dict:
         """Fetches JSON data from the Whoop API."""
@@ -27,7 +30,7 @@ class WhoopDataIngestor():
         
         return response_json
     
-    def paginator(self, json_data: dict, endpoint: str, start:str, end:str, ) -> pd.DataFrame:
+    def paginator(self, json_data: dict, endpoint: str, start:str, end:str) -> pd.DataFrame:
         """Handles pagination for Whoop API responses."""
 
         data = json_data["records"]
@@ -60,24 +63,30 @@ class WhoopDataIngestor():
         return df
 
 
-    def data_retrieval(self, start:str, end:str):
+    def data_pipeline(self, start:str, end:str):
         """Retrieves data from Whoop API and saves to CSV files."""
 
-        endpoints = {'recovery': 'recovery', 'sleep':'activity/sleep', 'workout': 'activity/workout'}  
+        # endpoints = {'recovery': 'recovery', 'sleep':'activity/sleep', 'workout': 'activity/workout'}  
+        endpoints = {'fact_activity_sleep':'activity/sleep'}  
         params = {'start': start, 'end': end}
 
-        for endpoint in endpoints.values(): 
-            json_data = self.get_json(self.base_url, endpoint, params, self.access_token)   
-            df = self.paginator(json_data, endpoint, params['start'], params['end'])
-            endpoint = endpoint.replace('/', '_')
-            df.to_csv(f"data/{endpoint}_data.csv", index=False)
+        for endpoint_key, endpoint_value in endpoints.items(): 
+            json_data = self.get_json(self.base_url, endpoint_value, params)   
+            df = self.paginator(json_data, endpoint_value, params['start'], params['end'])
+            endpoint_value = endpoint_value.replace('/', '_')
+            if endpoint_value == 'activity_sleep':
+                df = self.whoop_data_cleaner.clean_sleep_data(df)
+
+            df.to_csv(f"data/{endpoint_key}_data.csv", index=False)
+            self.whoop_database.upsert_data(df, endpoint_key)
         
 
-
+   
 
 
 if __name__ == '__main__':
     whoop_client = WhoopClient()
+    whoop_db = WhoopDB()
 
     tokens = whoop_client.load_tokens()
 
@@ -86,8 +95,8 @@ if __name__ == '__main__':
         tokens = whoop_client.load_tokens()
 
 
- 
     whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0))
 
-    whoop_ingestor.data_retrieval('2025-08-14T00:00:00.000Z', '2025-08-27T00:00:00.000Z')
+    whoop_db.create_tables()
+    sleep_data = whoop_ingestor.data_pipeline('2025-08-14T00:00:00.000Z', '2025-09-02T00:00:00.000Z')
    

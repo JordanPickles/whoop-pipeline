@@ -14,7 +14,7 @@ class Base(DeclarativeBase):
     }
 
 class Sleep(Base):
-    __tablename__ = 'fact_sleep'
+    __tablename__ = 'fact_activity_sleep'
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     cycle_id: Mapped[int]
     v1_id: Mapped[int]
