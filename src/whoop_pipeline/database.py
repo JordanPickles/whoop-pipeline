@@ -7,8 +7,6 @@ import os
 import pandas as pd
 
 
-
-
 class WhoopDB():
     def __init__(self):
         self.db_url = settings.db_url

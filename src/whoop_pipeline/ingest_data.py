@@ -32,8 +32,8 @@ class WhoopDataIngestor():
     
     def paginator(self, json_data: dict, endpoint: str, start:str, end:str) -> pd.DataFrame:
         """Handles pagination for Whoop API responses."""
-
-        data = json_data["records"]
+        print(json_data)
+        data = json_data.get("records")
         response_json_list = []
         response_json_list.extend(data)
         next_access_token = json_data.get("next_token")
@@ -55,7 +55,7 @@ class WhoopDataIngestor():
             response = requests.get(url, headers=headers, params=params)
             response.raise_for_status()
             response_json = response.json()
-            records = response_json["records"]
+            records = response_json.get("records")
             response_json_list.extend(records)
 
             next_access_token = response_json.get("next_token")
@@ -67,9 +67,8 @@ class WhoopDataIngestor():
 
     def data_pipeline(self, start:str, end:str):
         """Retrieves data from Whoop API and saves to CSV files."""
-
-        # endpoints = {'recovery': 'recovery', 'sleep':'activity/sleep', 'workout': 'activity/workout'}  
-        endpoints = {'fact_activity_sleep':'activity/sleep'}  
+ 
+        endpoints = {'fact_cycle': 'cycle', 'fact_activity_sleep':'activity/sleep', 'fact_recovery':'recovery', 'fact_workout':'activity/workout'}  
         params = {'start': start, 'end': end}
 
         for endpoint_key, endpoint_value in endpoints.items(): 
@@ -77,6 +76,13 @@ class WhoopDataIngestor():
             df = self.paginator(json_data, endpoint_value, params['start'], params['end'])
             if endpoint_value == 'activity/sleep':
                 df = self.whoop_data_cleaner.clean_sleep_data(df)
+            elif endpoint_value == 'activity/workout':
+                df = self.whoop_data_cleaner.clean_workout_data(df)
+            elif endpoint_value == 'recovery':
+                df = self.whoop_data_cleaner.clean_recovery_data(df)
+            else: 
+                df = self.whoop_data_cleaner.clean_cycle_data(df)
+                
 
             df.to_csv(f"data/{endpoint_key}_data.csv", index=False)
             self.whoop_database.upsert_data(df, endpoint_key)
