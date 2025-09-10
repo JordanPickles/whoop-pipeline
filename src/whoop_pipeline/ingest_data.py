@@ -32,7 +32,6 @@ class WhoopDataIngestor():
     
     def paginator(self, json_data: dict, endpoint: str, start:str, end:str) -> pd.DataFrame:
         """Handles pagination for Whoop API responses."""
-        print(json_data)
         data = json_data.get("records")
         response_json_list = []
         response_json_list.extend(data)
@@ -41,7 +40,7 @@ class WhoopDataIngestor():
         while next_access_token is not None:
             
             
-            print("Fetching next page of data with token:", next_access_token)
+            # print("Fetching next page of data with token:", next_access_token)
             url = f"{self.base_url}{endpoint}"
         
             headers = {
@@ -105,5 +104,5 @@ if __name__ == '__main__':
     whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0))
 
     # whoop_db.create_tables()
-    sleep_data = whoop_ingestor.data_pipeline('2025-05-01T00:00:00.000Z', '2025-09-02T00:00:00.000Z')
+    sleep_data = whoop_ingestor.data_pipeline('2025-01-01T00:00:00.000Z', '2025-09-09T00:00:00.000Z')
    
