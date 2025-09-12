@@ -103,6 +103,6 @@ if __name__ == '__main__':
 
     whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0))
 
-    # whoop_db.create_tables()
-    sleep_data = whoop_ingestor.data_pipeline('2025-01-01T00:00:00.000Z', '2025-09-09T00:00:00.000Z')
+    whoop_db.create_tables()
+    sleep_data = whoop_ingestor.data_pipeline('2025-01-01T00:00:00.000Z', '2025-09-11T00:00:00.000Z')
    

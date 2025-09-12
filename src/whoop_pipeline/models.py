@@ -16,7 +16,7 @@ class Base(DeclarativeBase):
 class Sleep(Base):
     __tablename__ = 'fact_activity_sleep'
     sleep_id: Mapped[str] = mapped_column(VARCHAR, primary_key=True)
-    cycle_id: Mapped[int] = mapped_column(Integer, ForeignKey('fact_cycles.cycle_id'))
+    cycle_id: Mapped[int] = mapped_column(Integer, ForeignKey('fact_cycle.cycle_id'))
     v1_id: Mapped[int]
     user_id: Mapped[int]
     created_at: Mapped[DateTime]
@@ -26,14 +26,14 @@ class Sleep(Base):
     timezone_offset: Mapped[int]
     nap: Mapped[bool]
     state: Mapped[str]
-    stage_summary_total_in_bed_time_milli: Mapped[int]
-    stage_summary_total_awake_time_milli: Mapped[int]
-    stage_summary_total_no_data_time_milli: Mapped[int]
-    stage_summary_total_light_sleep_time_milli: Mapped[int]
-    stage_summary_total_slow_wave_sleep_time_milli: Mapped[int]
-    stage_summary_total_rem_sleep_time_milli: Mapped[int]
-    stage_summary_sleep_cycle_count: Mapped[int]
-    stage_summary_disturbance_count: Mapped[int]
+    total_in_bed_time_milli: Mapped[int]
+    total_awake_time_milli: Mapped[int]
+    total_no_data_time_milli: Mapped[int]
+    total_light_sleep_time_milli: Mapped[int]
+    total_slow_wave_sleep_time_milli: Mapped[int]
+    total_rem_sleep_time_milli: Mapped[int]
+    sleep_cycle_count: Mapped[int]
+    disturbance_count: Mapped[int]
     sleep_needed_baseline_milli: Mapped[int]
     sleep_needed_need_from_sleep_debt_milli: Mapped[int]
     sleep_needed_need_from_recent_strain_milli: Mapped[int]
@@ -47,8 +47,8 @@ class Sleep(Base):
 
 class Recovery(Base):
     __tablename__ = 'fact_recovery'
-    cycle_id: Mapped[int] = mapped_column(Integer, ForeignKey('fact_cycles.cycle_id'))
-    recovery_id: Mapped[str] = mapped_column(VARCHAR, primary_key=True)
+    cycle_id: Mapped[int] = mapped_column(Integer, ForeignKey('fact_cycle.cycle_id'))
+    sleep_id: Mapped[str] = mapped_column(VARCHAR, primary_key=True)
     user_id: Mapped[int]
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
@@ -99,7 +99,7 @@ class Cycles(Base):
     start: Mapped[DateTime]
     end: Mapped[DateTime]
     timezone_offset: Mapped[int]
-    score_state: Mapped[str]
+    state: Mapped[str]
     strain: Mapped[float]
     kilojoule: Mapped[float]
     average_heart_rate: Mapped[int]
@@ -107,7 +107,7 @@ class Cycles(Base):
 
 
     sleep_id: Mapped[Optional[str]] = mapped_column(VARCHAR, ForeignKey('fact_activity_sleep.sleep_id'))
-    recovery_id: Mapped[Optional[str]] = mapped_column(VARCHAR, ForeignKey('fact_recovery.recovery_id'))
+    recovery_id: Mapped[Optional[str]] = mapped_column(VARCHAR, ForeignKey('fact_recovery.sleep_id'))
     
     sleep: Mapped[Optional[Sleep]] = relationship("Sleep", backref="cycles")
     recovery: Mapped[Optional[Recovery]] = relationship("Recovery", backref="cycles")
