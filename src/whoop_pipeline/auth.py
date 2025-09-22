@@ -35,7 +35,6 @@ class WhoopClient():
     def run_local_server_for_code(self, expected_state: str, timeout: int = 180) -> str:
         """Run a local server to capture the authorization code from the redirect."""
 
-
         parsed = urlparse(str(self.whoop_redirect_uri))
         host = parsed.hostname
         port = parsed.port
@@ -130,6 +129,7 @@ class WhoopClient():
                 "client_secret": self.whoop_client_secret,
                 }
         response = requests.post(str(self.whoop_token_url), headers=headers, data=data)
+        
         if response.status_code >= 400:
             print("STATUS:", response.status_code)
             print("URL:", str(settings.whoop_token_url))
@@ -165,7 +165,7 @@ class WhoopClient():
         self.save_tokens(tokens)
         return tokens
         
-    def refresh_access_token(self):
+    def get_refreshed_access_token(self):
         tokens = self.load_tokens()
         if int(time.time()) >= tokens.get("expires_at", 0):
             print("Access token expired or about to expire, refreshing...")

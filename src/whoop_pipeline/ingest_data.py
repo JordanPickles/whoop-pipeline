@@ -12,13 +12,18 @@ class WhoopDataIngestor():
     def __init__(self, access_token:str):
         self.access_token = access_token
         self.base_url = settings.whoop_api_base_url
+        self.cycles_base_url = settings.whoop_api_cycles_base_url
         self.whoop_data_cleaner = WhoopDataCleaner()
         self.whoop_database = WhoopDB()
 
-    def get_json(self, base_url:str, endpoint:str, params:dict) -> dict:
+    def get_json(self, base_url:str, base_cycles_url:str, endpoint:str, params:dict) -> dict:
         """Fetches JSON data from the Whoop API."""
 
-        url = f"{self.base_url}{endpoint}"
+        if endpoint == 'cycle': 
+            base_url = self.cycles_base_url 
+        else: base_url = self.base_url
+        
+        url = f"{base_url}{endpoint}"
         headers = {
             "Authorization": f"Bearer {self.access_token}"
             , "Accept": "application/json"
@@ -30,18 +35,23 @@ class WhoopDataIngestor():
         
         return response_json
     
-    def paginator(self, json_data: dict, endpoint: str, start:str, end:str) -> pd.DataFrame:
+    def paginator(self, json_data: dict, endpoint: str, limit:int , start:str, end:str) -> pd.DataFrame:
         """Handles pagination for Whoop API responses."""
         data = json_data.get("records")
         response_json_list = []
         response_json_list.extend(data)
         next_access_token = json_data.get("next_token")
 
+
+        if endpoint == 'cycle': 
+            base_url = self.cycles_base_url 
+        else: base_url = self.base_url
+
         while next_access_token is not None:
             
             
             # print("Fetching next page of data with token:", next_access_token)
-            url = f"{self.base_url}{endpoint}"
+            url = f"{base_url}{endpoint}"
         
             headers = {
                 "Authorization": f"Bearer {self.access_token}"
@@ -68,11 +78,14 @@ class WhoopDataIngestor():
         """Retrieves data from Whoop API and saves to CSV files."""
  
         endpoints = {'fact_cycle': 'cycle', 'fact_activity_sleep':'activity/sleep', 'fact_recovery':'recovery', 'fact_workout':'activity/workout'}  
-        params = {'start': start, 'end': end}
+        params = {'limit': 25, 'start': start, 'end': end}
 
         for endpoint_key, endpoint_value in endpoints.items(): 
-            json_data = self.get_json(self.base_url, endpoint_value, params)   
-            df = self.paginator(json_data, endpoint_value, params['start'], params['end'])
+            json_data = self.get_json(self.base_url, self.cycles_base_url, endpoint_value, params) 
+            if endpoint_key == 'fact_cycle':
+                with open('data/cycle_data.json', 'w') as json_file:
+                    json_file.write(json.dumps(json_data, indent=4))  
+            df = self.paginator(json_data, endpoint_value, params['limit'] , params['start'], params['end'])
             if endpoint_value == 'activity/sleep':
                 df = self.whoop_data_cleaner.clean_sleep_data(df)
             elif endpoint_value == 'activity/workout':
@@ -95,10 +108,17 @@ if __name__ == '__main__':
     whoop_db = WhoopDB()
 
     tokens = whoop_client.load_tokens()
-
     if tokens.get("expires_at", 0) <= int(time.time()):
         tokens = whoop_client.authorisation()
         tokens = whoop_client.load_tokens()
+    # if tokens.get("expires_at", 0) <= int(time.time()):
+    #     try:
+    #         tokens = whoop_client.get_refreshed_access_token()
+    #     except Exception as e:
+    #         print(f"Error refreshing token: {e}")
+    #         print("Re-authenticating...")
+    #         tokens = whoop_client.authorisation()
+    #         tokens = whoop_client.load_tokens()
 
 
     whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0))
