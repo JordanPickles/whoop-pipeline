@@ -52,6 +52,7 @@ class Recovery(Base):
     user_id: Mapped[int]
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
+    state: Mapped[str]
     score_state: Mapped[str]
     user_calibrating: Mapped[bool]
     recovery_score: Mapped[int]

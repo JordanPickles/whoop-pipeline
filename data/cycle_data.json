@@ -1,0 +1,405 @@
+{
+    "records": [
+        {
+            "id": 1056726802,
+            "user_id": 14052407,
+            "created_at": "2025-09-11T02:42:36.487Z",
+            "updated_at": "2025-09-12T05:21:03.763Z",
+            "start": "2025-09-10T21:52:09.817Z",
+            "end": "2025-09-11T22:24:24.618Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 12.840511,
+                "kilojoule": 10497.995,
+                "average_heart_rate": 72,
+                "max_heart_rate": 186
+            }
+        },
+        {
+            "id": 1055406507,
+            "user_id": 14052407,
+            "created_at": "2025-09-10T04:33:48.189Z",
+            "updated_at": "2025-09-11T02:42:41.657Z",
+            "start": "2025-09-09T22:06:03.719Z",
+            "end": "2025-09-10T21:52:09.817Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 9.394007,
+                "kilojoule": 8952.076,
+                "average_heart_rate": 69,
+                "max_heart_rate": 147
+            }
+        },
+        {
+            "id": 1053916701,
+            "user_id": 14052407,
+            "created_at": "2025-09-09T04:35:45.307Z",
+            "updated_at": "2025-09-10T04:33:53.346Z",
+            "start": "2025-09-08T22:04:04.988Z",
+            "end": "2025-09-09T22:06:03.719Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 8.49563,
+                "kilojoule": 9529.108,
+                "average_heart_rate": 69,
+                "max_heart_rate": 156
+            }
+        },
+        {
+            "id": 1052295379,
+            "user_id": 14052407,
+            "created_at": "2025-09-08T03:18:27.179Z",
+            "updated_at": "2025-09-09T04:35:50.437Z",
+            "start": "2025-09-07T20:14:55.854Z",
+            "end": "2025-09-08T22:04:04.988Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 11.680651,
+                "kilojoule": 9520.416,
+                "average_heart_rate": 69,
+                "max_heart_rate": 153
+            }
+        },
+        {
+            "id": 1051305111,
+            "user_id": 14052407,
+            "created_at": "2025-09-07T08:41:04.903Z",
+            "updated_at": "2025-09-08T03:18:32.330Z",
+            "start": "2025-09-06T23:53:34.965Z",
+            "end": "2025-09-07T20:14:55.854Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 5.58802,
+                "kilojoule": 7358.623,
+                "average_heart_rate": 74,
+                "max_heart_rate": 154
+            }
+        },
+        {
+            "id": 1049691096,
+            "user_id": 14052407,
+            "created_at": "2025-09-06T06:50:34.155Z",
+            "updated_at": "2025-09-07T08:41:10.048Z",
+            "start": "2025-09-05T22:24:36.140Z",
+            "end": "2025-09-06T23:53:34.965Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 16.610806,
+                "kilojoule": 15845.774,
+                "average_heart_rate": 84,
+                "max_heart_rate": 176
+            }
+        },
+        {
+            "id": 1048260433,
+            "user_id": 14052407,
+            "created_at": "2025-09-05T06:31:50.590Z",
+            "updated_at": "2025-09-06T06:50:39.284Z",
+            "start": "2025-09-04T21:33:07.783Z",
+            "end": "2025-09-05T22:24:36.140Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 6.8568377,
+                "kilojoule": 9278.34,
+                "average_heart_rate": 71,
+                "max_heart_rate": 139
+            }
+        },
+        {
+            "id": 1046737898,
+            "user_id": 14052407,
+            "created_at": "2025-09-04T05:49:17.027Z",
+            "updated_at": "2025-09-05T06:31:55.706Z",
+            "start": "2025-09-03T22:22:35.614Z",
+            "end": "2025-09-04T21:33:07.783Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 5.938885,
+                "kilojoule": 8436.972,
+                "average_heart_rate": 70,
+                "max_heart_rate": 149
+            }
+        },
+        {
+            "id": 1045086197,
+            "user_id": 14052407,
+            "created_at": "2025-09-03T04:23:13.900Z",
+            "updated_at": "2025-09-04T05:49:22.341Z",
+            "start": "2025-09-02T21:47:07.549Z",
+            "end": "2025-09-03T22:22:35.614Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 8.938011,
+                "kilojoule": 9047.967,
+                "average_heart_rate": 69,
+                "max_heart_rate": 139
+            }
+        },
+        {
+            "id": 1043721408,
+            "user_id": 14052407,
+            "created_at": "2025-09-02T05:10:50.782Z",
+            "updated_at": "2025-09-03T04:23:19.020Z",
+            "start": "2025-09-01T22:28:25.143Z",
+            "end": "2025-09-02T21:47:07.549Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 8.278668,
+                "kilojoule": 9301.572,
+                "average_heart_rate": 70,
+                "max_heart_rate": 161
+            }
+        },
+        {
+            "id": 1042276203,
+            "user_id": 14052407,
+            "created_at": "2025-09-01T05:17:20.371Z",
+            "updated_at": "2025-09-02T05:10:55.958Z",
+            "start": "2025-08-31T21:43:09.819Z",
+            "end": "2025-09-01T22:28:25.143Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 11.717275,
+                "kilojoule": 9380.541,
+                "average_heart_rate": 69,
+                "max_heart_rate": 162
+            }
+        },
+        {
+            "id": 1040959118,
+            "user_id": 14052407,
+            "created_at": "2025-08-31T07:10:38.950Z",
+            "updated_at": "2025-09-01T05:17:25.545Z",
+            "start": "2025-08-31T01:23:40.960Z",
+            "end": "2025-08-31T21:43:09.819Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 6.955836,
+                "kilojoule": 7825.3174,
+                "average_heart_rate": 78,
+                "max_heart_rate": 153
+            }
+        },
+        {
+            "id": 1039513487,
+            "user_id": 14052407,
+            "created_at": "2025-08-30T06:56:49.118Z",
+            "updated_at": "2025-08-31T07:10:44.086Z",
+            "start": "2025-08-29T23:02:48.517Z",
+            "end": "2025-08-31T01:23:40.960Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 16.383034,
+                "kilojoule": 15254.329,
+                "average_heart_rate": 84,
+                "max_heart_rate": 186
+            }
+        },
+        {
+            "id": 1038046088,
+            "user_id": 14052407,
+            "created_at": "2025-08-29T06:10:18.657Z",
+            "updated_at": "2025-08-30T06:56:54.261Z",
+            "start": "2025-08-28T22:25:16.646Z",
+            "end": "2025-08-29T23:02:48.517Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 6.216105,
+                "kilojoule": 9010.729,
+                "average_heart_rate": 69,
+                "max_heart_rate": 169
+            }
+        },
+        {
+            "id": 1036644490,
+            "user_id": 14052407,
+            "created_at": "2025-08-28T06:21:28.628Z",
+            "updated_at": "2025-08-29T06:10:23.768Z",
+            "start": "2025-08-27T22:47:45.747Z",
+            "end": "2025-08-28T22:25:16.646Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 5.3887386,
+                "kilojoule": 8467.361,
+                "average_heart_rate": 67,
+                "max_heart_rate": 145
+            }
+        },
+        {
+            "id": 1034967548,
+            "user_id": 14052407,
+            "created_at": "2025-08-27T04:30:15.586Z",
+            "updated_at": "2025-08-28T06:21:33.740Z",
+            "start": "2025-08-26T22:11:40.467Z",
+            "end": "2025-08-27T22:47:45.747Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 7.713925,
+                "kilojoule": 8847.283,
+                "average_heart_rate": 68,
+                "max_heart_rate": 146
+            }
+        },
+        {
+            "id": 1033521482,
+            "user_id": 14052407,
+            "created_at": "2025-08-26T04:29:47.305Z",
+            "updated_at": "2025-08-27T07:46:29.909Z",
+            "start": "2025-08-25T22:57:46.731Z",
+            "end": "2025-08-26T22:11:40.467Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 13.416447,
+                "kilojoule": 9988.949,
+                "average_heart_rate": 74,
+                "max_heart_rate": 171
+            }
+        },
+        {
+            "id": 1032194714,
+            "user_id": 14052407,
+            "created_at": "2025-08-25T05:30:21.483Z",
+            "updated_at": "2025-08-26T04:29:52.450Z",
+            "start": "2025-08-24T23:09:45.006Z",
+            "end": "2025-08-25T22:57:46.731Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 5.526702,
+                "kilojoule": 8628.466,
+                "average_heart_rate": 73,
+                "max_heart_rate": 137
+            }
+        },
+        {
+            "id": 1030639263,
+            "user_id": 14052407,
+            "created_at": "2025-08-24T04:53:21.768Z",
+            "updated_at": "2025-08-25T05:30:26.605Z",
+            "start": "2025-08-24T00:16:31.292Z",
+            "end": "2025-08-24T23:09:45.006Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 6.16196,
+                "kilojoule": 8333.023,
+                "average_heart_rate": 80,
+                "max_heart_rate": 140
+            }
+        },
+        {
+            "id": 1029462788,
+            "user_id": 14052407,
+            "created_at": "2025-08-23T06:57:21.415Z",
+            "updated_at": "2025-08-24T04:53:26.905Z",
+            "start": "2025-08-22T23:16:22.085Z",
+            "end": "2025-08-24T00:16:31.292Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 18.212631,
+                "kilojoule": 17839.756,
+                "average_heart_rate": 88,
+                "max_heart_rate": 175
+            }
+        },
+        {
+            "id": 1028018434,
+            "user_id": 14052407,
+            "created_at": "2025-08-22T06:10:35.787Z",
+            "updated_at": "2025-08-23T06:57:26.567Z",
+            "start": "2025-08-21T22:29:06.417Z",
+            "end": "2025-08-22T23:16:22.085Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 5.363782,
+                "kilojoule": 8885.07,
+                "average_heart_rate": 69,
+                "max_heart_rate": 140
+            }
+        },
+        {
+            "id": 1026546556,
+            "user_id": 14052407,
+            "created_at": "2025-08-21T05:36:24.986Z",
+            "updated_at": "2025-08-22T06:10:40.929Z",
+            "start": "2025-08-20T22:16:39.000Z",
+            "end": "2025-08-21T22:29:06.417Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 13.570948,
+                "kilojoule": 11215.017,
+                "average_heart_rate": 72,
+                "max_heart_rate": 180
+            }
+        },
+        {
+            "id": 1025093706,
+            "user_id": 14052407,
+            "created_at": "2025-08-20T05:19:24.396Z",
+            "updated_at": "2025-08-21T05:39:18.250Z",
+            "start": "2025-08-19T22:29:46.796Z",
+            "end": "2025-08-20T22:16:39.000Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 6.6042123,
+                "kilojoule": 8830.559,
+                "average_heart_rate": 68,
+                "max_heart_rate": 155
+            }
+        },
+        {
+            "id": 1023589261,
+            "user_id": 14052407,
+            "created_at": "2025-08-19T04:36:50.452Z",
+            "updated_at": "2025-08-20T05:19:29.767Z",
+            "start": "2025-08-18T22:03:18.033Z",
+            "end": "2025-08-19T22:29:46.796Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 11.560861,
+                "kilojoule": 10207.2295,
+                "average_heart_rate": 70,
+                "max_heart_rate": 170
+            }
+        },
+        {
+            "id": 1022025261,
+            "user_id": 14052407,
+            "created_at": "2025-08-18T02:42:01.300Z",
+            "updated_at": "2025-08-19T04:36:55.595Z",
+            "start": "2025-08-17T20:16:04.516Z",
+            "end": "2025-08-18T22:03:18.033Z",
+            "timezone_offset": "+01:00",
+            "score_state": "SCORED",
+            "score": {
+                "strain": 10.241276,
+                "kilojoule": 9545.416,
+                "average_heart_rate": 66,
+                "max_heart_rate": 139
+            }
+        }
+    ],
+    "next_token": "eyIkIjoib0AxIiwibyI6MjV9"
+}

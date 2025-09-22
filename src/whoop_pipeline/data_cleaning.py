@@ -36,8 +36,14 @@ class WhoopDataCleaner():
             return 0
         elif isinstance(offset_str, str) and (offset_str.startswith('+') or offset_str.startswith('-')):
             sign = 1 if offset_str[0] == '+' else -1
-            hours, minutes = map(int, offset_str[1:].split(':'))
-        return sign * (hours * 60 + minutes)
+            try:
+                hours, minutes = map(int, offset_str[1:].split(':'))
+                return sign * (hours * 60 + minutes)
+            except Exception:
+                return 0
+        else:
+            return 0
+
     
     def clean_recovery_data(self, df:pd.DataFrame) -> pd.DataFrame:
         """Cleans the recovery data DataFrame."""
