@@ -82,9 +82,6 @@ class WhoopDataIngestor():
 
         for endpoint_key, endpoint_value in endpoints.items(): 
             json_data = self.get_json(self.base_url, self.cycles_base_url, endpoint_value, params) 
-            if endpoint_key == 'fact_cycle':
-                with open('data/cycle_data.json', 'w') as json_file:
-                    json_file.write(json.dumps(json_data, indent=4))  
             df = self.paginator(json_data, endpoint_value, params['limit'] , params['start'], params['end'])
             if endpoint_value == 'activity/sleep':
                 df = self.whoop_data_cleaner.clean_sleep_data(df)
@@ -106,23 +103,8 @@ class WhoopDataIngestor():
 if __name__ == '__main__':
     whoop_client = WhoopClient()
     whoop_db = WhoopDB()
-
-    tokens = whoop_client.load_tokens()
-    if tokens.get("expires_at", 0) <= int(time.time()):
-        tokens = whoop_client.authorisation()
-        tokens = whoop_client.load_tokens()
-    # if tokens.get("expires_at", 0) <= int(time.time()):
-    #     try:
-    #         tokens = whoop_client.get_refreshed_access_token()
-    #     except Exception as e:
-    #         print(f"Error refreshing token: {e}")
-    #         print("Re-authenticating...")
-    #         tokens = whoop_client.authorisation()
-    #         tokens = whoop_client.load_tokens()
-
-
+    tokens = whoop_client.get_live_access_token()
     whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0))
-
     whoop_db.create_tables()
     sleep_data = whoop_ingestor.data_pipeline('2025-01-01T00:00:00.000Z', '2025-09-11T00:00:00.000Z')
    

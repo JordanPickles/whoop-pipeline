@@ -47,9 +47,8 @@ class WhoopDataCleaner():
     
     def clean_recovery_data(self, df:pd.DataFrame) -> pd.DataFrame:
         """Cleans the recovery data DataFrame."""
-        
-        # Renames all columns to replace . with _
         df.columns = df.columns.str.split('score.').str[-1] # Keeps everything after score.
+
         # Convert date columns to datetime
         datetime_columns = ['created_at', 'updated_at']
         for col in datetime_columns:
@@ -63,8 +62,13 @@ class WhoopDataCleaner():
     
     def clean_workout_data(self, df:pd.DataFrame) -> pd.DataFrame:
         """Cleans the workout data DataFrame."""
-        
+        df = df.drop(columns=['score'], errors='ignore') # Drops the score column if it exists
+
         df.columns = df.columns.str.split('score.').str[-1] # Keeps everything after score.
+        df.columns = df.columns.str.split('zone_durations.').str[-1] # Keeps everything after zone_durations.
+        
+        df['timezone_offset'] = df['timezone_offset'].apply(self.tz_offset_to_minutes)
+        
         # Convert date columns to datetime
         datetime_columns = ['created_at', 'updated_at', 'start', 'end']
         for col in datetime_columns:
@@ -81,7 +85,7 @@ class WhoopDataCleaner():
 
         df = df.rename(columns={'id':'workout_id'})
         df['workout_id'] = df['workout_id'].astype(str)
-        
+
         return df
 
 

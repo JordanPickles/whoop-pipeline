@@ -128,6 +128,7 @@ class WhoopClient():
                 "client_id": self.whoop_client_id,
                 "client_secret": self.whoop_client_secret,
                 }
+        
         response = requests.post(str(self.whoop_token_url), headers=headers, data=data)
         
         if response.status_code >= 400:
@@ -136,6 +137,7 @@ class WhoopClient():
             print("POSTED DATA:", {**data, "client_secret": "***masked***"})
             print("BODY:", response.text)   # <-- this tells us exactly what's wrong
             response.raise_for_status()
+            return None
 
         return response.json()
     
@@ -165,11 +167,16 @@ class WhoopClient():
         self.save_tokens(tokens)
         return tokens
         
-    def get_refreshed_access_token(self):
+    def get_live_access_token(self):
         tokens = self.load_tokens()
+
         if int(time.time()) >= tokens.get("expires_at", 0):
             print("Access token expired or about to expire, refreshing...")
             tokens = self.refresh_access_token(tokens)
+            
+            if not tokens:
+                tokens = self.authorisation
+
             self.save_tokens(tokens)
         else:
             print("Access token is still valid.")
@@ -178,7 +185,7 @@ class WhoopClient():
 if __name__ == "__main__":
     whoop_client = WhoopClient()
     
-    tokens = whoop_client.authorisation()
+    tokens = whoop_client.get_live_access_token()
     print("\nToken response (summary):")
     print("  has access_token?  ", "access_token" in tokens)
     print("  has refresh_token? ", "refresh_token" in tokens)

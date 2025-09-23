@@ -53,7 +53,6 @@ class Recovery(Base):
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
     state: Mapped[str]
-    score_state: Mapped[str]
     user_calibrating: Mapped[bool]
     recovery_score: Mapped[int]
     resting_heart_rate: Mapped[int]
@@ -71,23 +70,24 @@ class Workout(Base):
     updated_at: Mapped[DateTime]
     start: Mapped[DateTime]
     end: Mapped[DateTime]
-    timezone_offset: Mapped[DateTime]
+    timezone_offset: Mapped[int]
     sport_name: Mapped[str]
-    score_state: Mapped[str]
+    state: Mapped[str]
     sport_id: Mapped[int]
-    strain: Mapped[float]
-    average_hear_rate: Mapped[int]
-    max_heart_rate: Mapped[int]
-    kilojoule: Mapped[float]
-    percent_recorded: Mapped[float]
-    altitude_gain_meter: Mapped[float]
-    altitude_change_meter: Mapped[float]
-    zone_zero_milli: Mapped[int]
-    zone_one_milli: Mapped[int]
-    zone_two_milli: Mapped[int]
-    zone_three_milli: Mapped[int]
-    zone_four_milli: Mapped[int]
-    zone_five_milli: Mapped[int]
+    strain: Mapped[float | None] = mapped_column(Float, nullable=True)
+    average_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    max_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    kilojoule: Mapped[float | None] = mapped_column(Float, nullable=True)
+    percent_recorded: Mapped[float | None] = mapped_column(Float, nullable=True)
+    distance_meter: Mapped[float | None] = mapped_column(Float, nullable=True)
+    altitude_gain_meter: Mapped[float | None] = mapped_column(Float, nullable=True)
+    altitude_change_meter: Mapped[float | None] = mapped_column(Float, nullable=True)
+    zone_zero_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    zone_one_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    zone_two_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    zone_three_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    zone_four_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    zone_five_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
 class Cycles(Base):
