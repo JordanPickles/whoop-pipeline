@@ -6,7 +6,7 @@ from whoop_pipeline.database import WhoopDB
 from whoop_pipeline.data_cleaning import WhoopDataCleaner
 import pandas as pd
 import time
-
+from datetime import date, timedelta, datetime as dt
 
 class WhoopDataIngestor():
     def __init__(self, access_token:str):
@@ -59,7 +59,8 @@ class WhoopDataIngestor():
             }   
             params = {'nextToken': next_access_token,
                 'start': start,
-                'end': end}
+                'end': end,
+                'limit': limit}
         
             response = requests.get(url, headers=headers, params=params)
             response.raise_for_status()
@@ -74,11 +75,13 @@ class WhoopDataIngestor():
         return df
 
 
-    def data_pipeline(self, start:str, end:str):
+    def data_pipeline(self, start_date:str, end_date:str):
         """Retrieves data from Whoop API and saves to CSV files."""
  
         endpoints = {'fact_cycle': 'cycle', 'fact_activity_sleep':'activity/sleep', 'fact_recovery':'recovery', 'fact_workout':'activity/workout'}  
-        params = {'limit': 25, 'start': start, 'end': end}
+        
+        
+        params = {'limit': 25, 'start': start_date, 'end': end_date}
 
         for endpoint_key, endpoint_value in endpoints.items(): 
             json_data = self.get_json(self.base_url, self.cycles_base_url, endpoint_value, params) 
@@ -106,5 +109,14 @@ if __name__ == '__main__':
     tokens = whoop_client.get_live_access_token()
     whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0))
     whoop_db.create_tables()
-    sleep_data = whoop_ingestor.data_pipeline('2025-01-01T00:00:00.000Z', '2025-09-11T00:00:00.000Z')
+    start_date = whoop_db.get_max_date() - pd.Timedelta('7 days') # Fetch data from 7 days before the latest date in the database
+    
+    if pd.isna(start_date):
+        start_date = pd.to_datetime('2024-01-01').tz_localize('UTC').strftime('%Y-%m-%dT%H:%M:%S.000Z')
+
+    
+    end_date = (pd.to_datetime('now') - pd.Timedelta('1 days')).tz_localize('UTC').strftime('%Y-%m-%dT%H:%M:%S.000Z')
+    
+
+    whoop_ingestor.data_pipeline(start_date, end_date)
    
