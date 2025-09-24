@@ -26,22 +26,22 @@ class Sleep(Base):
     timezone_offset: Mapped[int]
     nap: Mapped[bool]
     state: Mapped[str]
-    total_in_bed_time_milli: Mapped[int]
-    total_awake_time_milli: Mapped[int]
-    total_no_data_time_milli: Mapped[int]
-    total_light_sleep_time_milli: Mapped[int]
-    total_slow_wave_sleep_time_milli: Mapped[int]
-    total_rem_sleep_time_milli: Mapped[int]
-    sleep_cycle_count: Mapped[int]
-    disturbance_count: Mapped[int]
-    sleep_needed_baseline_milli: Mapped[int]
-    sleep_needed_need_from_sleep_debt_milli: Mapped[int]
-    sleep_needed_need_from_recent_strain_milli: Mapped[int]
-    sleep_needed_need_from_recent_nap_milli: Mapped[int]
-    respiratory_rate: Mapped[float]
-    sleep_performance_percentage: Mapped[float]
-    sleep_consistency_percentage: Mapped[float]
-    sleep_efficiency_percentage: Mapped[float]
+    total_in_bed_time_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    total_awake_time_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    total_no_data_time_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    total_light_sleep_time_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    total_slow_wave_sleep_time_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    total_rem_sleep_time_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    sleep_cycle_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    disturbance_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    sleep_needed_baseline_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    sleep_needed_need_from_sleep_debt_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    sleep_needed_need_from_recent_strain_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    sleep_needed_need_from_recent_nap_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    respiratory_rate: Mapped[float | None] = mapped_column(Float, nullable=True)
+    sleep_performance_percentage: Mapped[float | None] = mapped_column(Float, nullable=True)
+    sleep_consistency_percentage: Mapped[float | None] = mapped_column(Float, nullable=True)
+    sleep_efficiency_percentage: Mapped[float | None] = mapped_column(Float, nullable=True)
     
     
 
@@ -54,11 +54,11 @@ class Recovery(Base):
     updated_at: Mapped[DateTime]
     state: Mapped[str]
     user_calibrating: Mapped[bool]
-    recovery_score: Mapped[int]
-    resting_heart_rate: Mapped[int]
-    hrv_rmssd_milli: Mapped[float]
-    spo2_percentage: Mapped[float]
-    skin_temp_celsius: Mapped[float]
+    recovery_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    resting_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    hrv_rmssd_milli: Mapped[float | None] = mapped_column(Float, nullable=True)
+    spo2_percentage: Mapped[float | None] = mapped_column(Float, nullable=True)
+    skin_temp_celsius: Mapped[float | None] = mapped_column(Float, nullable=True)
 
  
 class Workout(Base):
@@ -101,10 +101,10 @@ class Cycles(Base):
     end: Mapped[DateTime]
     timezone_offset: Mapped[int]
     state: Mapped[str]
-    strain: Mapped[float]
-    kilojoule: Mapped[float]
-    average_heart_rate: Mapped[int]
-    max_heart_rate: Mapped[int]
+    strain: Mapped[float | None] = mapped_column(Float, nullable=True)
+    kilojoule: Mapped[float | None] = mapped_column(Float, nullable=True)
+    average_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    max_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
     sleep_id: Mapped[Optional[str]] = mapped_column(VARCHAR, ForeignKey('fact_activity_sleep.sleep_id'))

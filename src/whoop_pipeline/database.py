@@ -24,29 +24,13 @@ class WhoopDB():
         df.to_sql(table_name, con=self.engine, if_exists='append', index=False)
 
 
-    # def get_max_date(self):
-    #     """
-    #     Retrieves the maximum date from the dim_match table.
-    #     Returns:
-    #         datetime: The maximum date found in the dim_match table.
-    #         If no date is found, returns datetime(1900, 1, 1).
-    #         If an error occurs, returns 0."""
+    def get_max_date(self):
+  
         
-    #     if not self.connection:
-    #         return None
-    #     try:
-    #         cursor = self.connection.cursor()
-    #         query = sql.SQL("SELECT MAX(datetime) FROM dim_match") # Gets the max date from the database table
-    #         cursor.execute(query)
-    #         max_date = cursor.fetchone()[0]
-    #         cursor.close()
-    #         if max_date == None or max_date == 0:
-    #             return datetime(1900, 1, 1) # Returns a date should no date be found: e.g. the first time the code is run so that the rest of the code can stil run returning all matches
-    #         return max_date
-    #     except Exception as e:
-    #         print(f"Error executing query: {e}")
-    #         return 0
+        max_date = pd.read_sql("SELECT MAX(created_at) as max_date FROM fact_cycle", con=self.engine)
+
+        return max_date['max_date'][0]
     
 if __name__ == "__main__":
     whoop_db = WhoopDB()
-    whoop_db.create_tables()
+    print(whoop_db.get_max_date())
