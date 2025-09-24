@@ -90,7 +90,7 @@ class Workout(Base):
     zone_five_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
-class Cycles(Base):
+class Cycle(Base):
     __tablename__ = 'fact_cycle'
     cycle_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int]
