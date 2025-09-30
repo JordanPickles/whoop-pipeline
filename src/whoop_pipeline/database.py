@@ -45,19 +45,22 @@ class WhoopDB():
         }
 
         table = tables[table_name] #returns the table model
+        table_cols = {c.name for c in table.columns} # list of columns in the dataframe
+        
         rows = [{k: v for k, v in r.items() if k in table_cols}
             for r in df.to_dict(orient='records')]
 
         if not rows:
             return None  # nothing matches table columns
         
-        table_cols = {c.name for c in table.columns} # list of columns in the dataframe
+        
 
          # Create an insert statement with the data
         statement = insert(table).values(rows)
         
         updatable = [c for c in table_cols if c not in primary_keys[table_name]]
 
+        # Create the upsert (insert or update) statement. This replaces any existing data records with the new data
         upsert_statement = statement.on_conflict_do_update(
             index_elements= primary_keys[table_name], # Primary Key Column names
             set_={c: statement.excluded[c] for c in updatable} # Updates all columns from row except primary
@@ -66,7 +69,6 @@ class WhoopDB():
             conn.execute(upsert_statement)
 
         
-
 
     def get_max_date(self):
         """Fetches the maximum created_at date from the fact_cycle table."""    

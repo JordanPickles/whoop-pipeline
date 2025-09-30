@@ -62,8 +62,8 @@ class WhoopDataCleaner():
     
     def clean_workout_data(self, df:pd.DataFrame) -> pd.DataFrame:
         """Cleans the workout data DataFrame."""
-        df = df.drop(columns=['score'], errors='ignore') # Drops the score column if it exists
-
+        df = df[df['score'].notna()] # drops columns with no score. Occurs for things such as stretching activities etc
+        
         df.columns = df.columns.str.split('score.').str[-1] # Keeps everything after score.
         df.columns = df.columns.str.split('zone_durations.').str[-1] # Keeps everything after zone_durations.
         

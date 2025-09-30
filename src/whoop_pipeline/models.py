@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, Date, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, BigInteger, String, Float, Date, DateTime, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship, Mapped, mapped_column, Relationship, DeclarativeBase
-from sqlalchemy.dialects.postgresql import TEXT, VARCHAR, INTEGER, FLOAT, DATE, TIMESTAMP
+from sqlalchemy.dialects.postgresql import TEXT, VARCHAR, INTEGER, FLOAT, DATE, TIMESTAMP, BIGINT
 from typing import List
 from typing import Optional
 
@@ -43,6 +43,8 @@ class Sleep(Base):
     sleep_consistency_percentage: Mapped[float | None] = mapped_column(Float, nullable=True)
     sleep_efficiency_percentage: Mapped[float | None] = mapped_column(Float, nullable=True)
     
+    cycle: Mapped["Cycle"] = relationship("Cycle", back_populates="sleeps")
+    
     
 
 class Recovery(Base):
@@ -60,11 +62,13 @@ class Recovery(Base):
     spo2_percentage: Mapped[float | None] = mapped_column(Float, nullable=True)
     skin_temp_celsius: Mapped[float | None] = mapped_column(Float, nullable=True)
 
+    cycle: Mapped["Cycle"] = relationship("Cycle", back_populates="recoveries")
+
  
 class Workout(Base):
     __tablename__ = 'fact_workout'
     workout_id: Mapped[str] = mapped_column(VARCHAR, primary_key=True)
-    v1_id: Mapped[int]
+    v1_id: Mapped[int] = mapped_column(BigInteger)
     user_id: Mapped[int]
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
@@ -82,18 +86,17 @@ class Workout(Base):
     distance_meter: Mapped[float | None] = mapped_column(Float, nullable=True)
     altitude_gain_meter: Mapped[float | None] = mapped_column(Float, nullable=True)
     altitude_change_meter: Mapped[float | None] = mapped_column(Float, nullable=True)
-    zone_zero_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    zone_one_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    zone_two_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    zone_three_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    zone_four_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    zone_five_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    zone_zero_milli: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    zone_one_milli: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    zone_two_milli: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    zone_three_milli: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    zone_four_milli: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    zone_five_milli: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
 
 
 class Cycle(Base):
     __tablename__ = 'fact_cycle'
     cycle_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int]
     user_id: Mapped[int]
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
@@ -106,9 +109,6 @@ class Cycle(Base):
     average_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
     max_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
-
-    sleep_id: Mapped[Optional[str]] = mapped_column(VARCHAR, ForeignKey('fact_activity_sleep.sleep_id'))
-    recovery_id: Mapped[Optional[str]] = mapped_column(VARCHAR, ForeignKey('fact_recovery.sleep_id'))
     
-    sleep: Mapped[Optional[Sleep]] = relationship("Sleep", backref="cycles")
-    recovery: Mapped[Optional[Recovery]] = relationship("Recovery", backref="cycles")
+    recoveries: Mapped[list["Recovery"]] = relationship("Recovery", back_populates="cycle", primaryjoin="Cycle.cycle_id==Recovery.cycle_id")
+    sleeps: Mapped[list["Sleep"]] = relationship("Sleep", back_populates="cycle", primaryjoin="Cycle.cycle_id==Sleep.cycle_id")

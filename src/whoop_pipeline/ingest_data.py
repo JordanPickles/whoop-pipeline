@@ -49,8 +49,6 @@ class WhoopDataIngestor():
 
         while next_access_token is not None:
             
-            
-            # print("Fetching next page of data with token:", next_access_token)
             url = f"{base_url}{endpoint}"
         
             headers = {
@@ -112,11 +110,13 @@ if __name__ == '__main__':
     start_date = whoop_db.get_max_date() - pd.Timedelta('7 days') # Fetch data from 7 days before the latest date in the database
     
     if pd.isna(start_date):
-        start_date = pd.to_datetime('2024-01-01').tz_localize('UTC').strftime('%Y-%m-%dT%H:%M:%S.000Z')
+        start_date = pd.to_datetime('2024-01-01')
+    
+    start_date = start_date.tz_localize('UTC').strftime('%Y-%m-%dT%H:%M:%S.000Z')
 
     
     end_date = (pd.to_datetime('now') - pd.Timedelta('1 days')).tz_localize('UTC').strftime('%Y-%m-%dT%H:%M:%S.000Z')
-    
+    print(f"Fetching data from {start_date} to {end_date}")
 
     whoop_ingestor.data_pipeline(start_date, end_date)
    
