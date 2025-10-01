@@ -1,36 +1,78 @@
 import pandas as pd
-
+from whoop_pipeline.models import Sleep, Recovery, Workout, Cycle
+from sqlalchemy import Integer, BigInteger, Float, Numeric, DateTime, String, Boolean
 
 class WhoopDataCleaner():
-    def clean_sleep_data(self, df:pd.DataFrame) -> pd.DataFrame:
-        """Cleans the sleep data DataFrame."""
- 
-        df.columns = df.columns.str.split('score.').str[-1] 
-        df.columns = df.columns.str.split('stage_summary.').str[-1] 
-        df.columns = df.columns.str.replace('.', '_', regex=False)
-  
-        # Convert date columns to datetime
-        datetime_columns = ['created_at', 'updated_at', 'start', 'end']
-        for col in datetime_columns: # Converts all date columns to datetime
-            df[col] = pd.to_datetime(df[col])
+    
+    def classify_sqla_type(self, col_type):
+        """Classifies SQLAlchemy column types into simple categories."""
+        if isinstance(col_type, (DateTime,)):
+            return "datetime"
+        if isinstance(col_type, (BigInteger, Integer,)):
+            return "integer"
+        if isinstance(col_type, (Float, Numeric,)):
+            return "float"
+        if isinstance(col_type, (Boolean,)):
+            return "boolean"
+        if isinstance(col_type, (String,)):
+            return "string"
+        return "other"
+    
+    def columns_by_type(self, model_class) -> dict:
+        """
+        Returns a dict of column names grouped by simple types
+        using the SQLAlchemy model as source of truth.
+        """
+        column_data_types = {"datetime": [], "integer": [], "float": [], "boolean": [], "string": [], "other": []}
+        for col in model_class.__table__.columns:
+            label = self.classify_sqla_type(col.type)
+            column_data_types[label].append(col.name)
+        return column_data_types
 
-        df['timezone_offset'] = df['timezone_offset'].apply(self.tz_offset_to_minutes)
-        
-        int_cols = [col for col in df.columns if col.endswith("milli") or col.endswith("count") or col.endswith("_id")] # lists all columns ending with milli to be converted to in
-        for col in int_cols:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
+    
+    def split_column_names(self, df:pd.DataFrame, endpoint:str) -> pd.DataFrame:
+        """Splits column names on '.' and keeps the last part."""
+        if endpoint == 'activity/sleep':
+            df.columns = df.columns.str.replace('sleep_needed.', 'sleep_needed_', regex=False) # specific to sleep_needed columns
 
-        float_columns = [col for col in df.columns if col.endswith("percentage") or col.endswith("rate")]
-        for col in float_columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(float) 
-            if col.endswith("percentage"): #converts all percentages to a decimal
-                df[col] = df[col] / 100
-
-        df = df.rename(columns={'id':'sleep_id'})
-        df['sleep_id'] = df['sleep_id'].astype(str)
-        
+        df.columns = df.columns.str.split('.').str[-1]
         return df
-        
+    
+    def coerce_datetime(self, df:pd.DataFrame, columns:list) -> pd.DataFrame:
+        """Converts specified columns to datetime."""
+
+        for col in columns:
+            if col in df.columns:
+                df[col] = pd.to_datetime(df[col], errors='coerce')
+        return df
+    
+    def coerce_integer(self, df:pd.DataFrame, columns:list) -> pd.DataFrame:
+        """Converts specified columns to integer."""
+        for col in columns:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce').astype('Int64')
+        return df
+    
+    def coerce_float(self, df:pd.DataFrame, columns:list) -> pd.DataFrame:
+        """Converts specified columns to float."""
+        for col in columns:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce').astype(float)
+        return df
+    
+    def coerce_string(self, df:pd.DataFrame, columns:list) -> pd.DataFrame:
+        """Converts specified columns to string."""
+        for col in columns:
+            if col in df.columns:
+                df[col] = df[col].astype(str)
+        return df
+    def coerce_boolean(self, df:pd.DataFrame, columns:list) -> pd.DataFrame:
+        """Converts specified columns to boolean."""
+        for col in columns:
+            if col in df.columns:
+                df[col] = df[col].astype(bool)
+        return df
+
     def tz_offset_to_minutes(self, offset_str):
         if pd.isna(offset_str):
             return 0
@@ -43,74 +85,48 @@ class WhoopDataCleaner():
                 return 0
         else:
             return 0
-
-    
-    def clean_recovery_data(self, df:pd.DataFrame) -> pd.DataFrame:
-        """Cleans the recovery data DataFrame."""
-        df.columns = df.columns.str.split('score.').str[-1] # Keeps everything after score.
-
-        # Convert date columns to datetime
-        datetime_columns = ['created_at', 'updated_at']
-        for col in datetime_columns:
-            df[col] = pd.to_datetime(df[col])
         
-        print(df.columns)
-        
-        df['cycle_id'] = pd.to_numeric(df['cycle_id']).astype(int)
-
+    def rename_id_column(self, df:pd.DataFrame, endpoint:str) -> pd.DataFrame:
+        """Renames 'id' column to '{endpoint}_id'."""
+        if 'id' in df.columns:
+            df = df.rename(columns={'id': f"{endpoint.split('/')[-1]}_id"}) # gets last part of endpoint for id renaming
         return df
     
-    def clean_workout_data(self, df:pd.DataFrame) -> pd.DataFrame:
-        """Cleans the workout data DataFrame."""
-        df = df[df['score'].notna()] # drops columns with no score. Occurs for things such as stretching activities etc
+    def clean_data(self, df:pd.DataFrame, endpoint:str) -> pd.DataFrame:
+        """Cleans data based on the specified data type."""
+        model_classes = {'cycle': Cycle,
+                'activity/sleep': Sleep, 
+                'recovery': Recovery,
+                'activity/workout': Workout
+                } # returns the table schema from models.py based on endpoint
         
-        df.columns = df.columns.str.split('score.').str[-1] # Keeps everything after score.
-        df.columns = df.columns.str.split('zone_durations.').str[-1] # Keeps everything after zone_durations.
-        
-        df['timezone_offset'] = df['timezone_offset'].apply(self.tz_offset_to_minutes)
-        
-        # Convert date columns to datetime
-        datetime_columns = ['created_at', 'updated_at', 'start', 'end']
-        for col in datetime_columns:
-            df[col] = pd.to_datetime(df[col])
-        
+        if endpoint == 'activity/workout':
+            if 'score' in df.columns:
+                df = df[df['score'].notna()] # drops columns with no score. Occurs for things such as stretching activities etc
 
-        int_cols = [col for col in df.columns if col in ['_id', 'rate', 'milli']]
-        for col in int_cols:
-            df[col] = pd.to_numeric(df[col], errors='coerce').astype(int)
+        df = self.split_column_names(df, endpoint)
+        df = self.rename_id_column(df, endpoint) 
 
-        float_cols = [col for col in df.columns if col in ['strain', 'kilojoule', 'meter']]
-        for col in float_cols:
-            df[col] = pd.to_numeric(df[col], errors='coerce').astype(float)
+        if 'timezone_offset' in df.columns:
+            df['timezone_offset'] = df['timezone_offset'].apply(self.tz_offset_to_minutes)
 
-        df = df.rename(columns={'id':'workout_id'})
-        df['workout_id'] = df['workout_id'].astype(str)
+        
+        model_class = model_classes[endpoint]
+        col_types = self.columns_by_type(model_class)
+        print(col_types)
+
+        df = self.coerce_datetime(df, col_types['datetime'])
+        df = self.coerce_integer(df, col_types['integer'])
+        df = self.coerce_float(df, col_types['float'])
+        df = self.coerce_string(df, col_types['string'])
+        df = self.coerce_boolean(df, col_types['boolean'])
+
+        
 
         return df
 
-
-    def clean_cycle_data(self, df:pd.DataFrame) -> pd.DataFrame:
-        """Cleans the cycle data DataFrame."""
-        
-        df.columns = df.columns.str.split('score.').str[-1] # Keeps everything after score.
-        # Convert date columns to datetime
-        datetime_columns = ['created_at', 'updated_at', 'start', 'end']
-        for col in datetime_columns:
-            df[col] = pd.to_datetime(df[col])
-
-        df['timezone_offset'] = df['timezone_offset'].apply(self.tz_offset_to_minutes)
-        
-        int_cols = [col for col in df.columns if col in ['rate']]
-        for col in int_cols:
-            df[col] = pd.to_numeric(df[col], errors='coerce').astype(int)
-
-        
-        float_cols = [col for col in df.columns if col in ['strain', 'kilojoule']]
-        for col in float_cols:
-            df[col] = pd.to_numeric(df[col], errors='coerce').astype(float)
-        
-        df = df.rename(columns={'id':'cycle_id'})
-        df['cycle_id'] = pd.to_numeric(df['cycle_id']).astype(int)
-        
-        return df
-    
+if __name__ == '__main__':
+    cleaner = WhoopDataCleaner()
+    schema = cleaner.classify_sqla_type('workout')
+    col_types = cleaner.columns_by_type(schema)
+    print(col_types)
