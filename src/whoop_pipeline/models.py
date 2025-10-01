@@ -54,7 +54,7 @@ class Recovery(Base):
     user_id: Mapped[int]
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
-    state: Mapped[str]
+    state: Mapped[str| None] = mapped_column(String, nullable=True)
     user_calibrating: Mapped[bool]
     recovery_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     resting_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -76,7 +76,7 @@ class Workout(Base):
     end: Mapped[DateTime]
     timezone_offset: Mapped[int]
     sport_name: Mapped[str]
-    state: Mapped[str]
+    state: Mapped[str| None] = mapped_column(String, nullable=True)
     sport_id: Mapped[int]
     strain: Mapped[float | None] = mapped_column(Float, nullable=True)
     average_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
