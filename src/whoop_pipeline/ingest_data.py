@@ -4,6 +4,7 @@ from whoop_pipeline.config import settings
 from whoop_pipeline.auth import WhoopClient
 from whoop_pipeline.database import WhoopDB
 from whoop_pipeline.data_cleaning import WhoopDataCleaner
+import whoop_pipeline.models as WhoopModels
 import pandas as pd
 import time
 from datetime import date, timedelta, datetime as dt
@@ -76,24 +77,19 @@ class WhoopDataIngestor():
     def data_pipeline(self, start_date:str, end_date:str):
         """Retrieves data from Whoop API and saves to CSV files."""
  
-        endpoints = {'fact_cycle': 'cycle', 'fact_activity_sleep':'activity/sleep', 'fact_recovery':'recovery', 'fact_workout':'activity/workout'}  
+        endpoints = {'fact_cycle': 'cycle',
+                      'fact_activity_sleep':'activity/sleep',
+                        'fact_recovery':'recovery',
+                          'fact_workout':'activity/workout'}  
         
         
         params = {'limit': 25, 'start': start_date, 'end': end_date}
 
+
         for endpoint_key, endpoint_value in endpoints.items(): 
             json_data = self.get_json(self.base_url, self.cycles_base_url, endpoint_value, params) 
-            df = self.paginator(json_data, endpoint_value, params['limit'] , params['start'], params['end'])
-            if endpoint_value == 'activity/sleep':
-                df = self.whoop_data_cleaner.clean_sleep_data(df)
-            elif endpoint_value == 'activity/workout':
-                df = self.whoop_data_cleaner.clean_workout_data(df)
-            elif endpoint_value == 'recovery':
-                df = self.whoop_data_cleaner.clean_recovery_data(df)
-            else: 
-                df = self.whoop_data_cleaner.clean_cycle_data(df)
-                
-
+            df = self.paginator(json_data, endpoint_value, params['limit'] , params['start'], params['end'])            
+            df = self.whoop_data_cleaner.clean_data(df, endpoint_value)
             df.to_csv(f"data/{endpoint_key}_data.csv", index=False)
             self.whoop_database.upsert_data(df, endpoint_key)
         
