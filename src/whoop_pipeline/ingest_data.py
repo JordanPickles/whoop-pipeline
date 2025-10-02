@@ -69,6 +69,10 @@ class WhoopDataIngestor():
 
             next_access_token = response_json.get("next_token")
 
+        if endpoint == 'activity/workout':
+            records = [r for r in records if r.get("score") is not None ] # drops records with no score. Occurs for things such as stretching activities etc
+        
+        
         df =  pd.json_normalize(response_json_list)
         
         return df
