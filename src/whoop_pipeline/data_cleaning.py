@@ -100,28 +100,21 @@ class WhoopDataCleaner():
                 'activity/workout': Workout
                 } # returns the table schema from models.py based on endpoint
         
-        if endpoint == 'activity/workout':
-            if 'score' in df.columns:
-                df = df[df['score'].notna()] # drops columns with no score. Occurs for things such as stretching activities etc
-
-        df = self.split_column_names(df, endpoint)
-        df = self.rename_id_column(df, endpoint) 
 
         if 'timezone_offset' in df.columns:
             df['timezone_offset'] = df['timezone_offset'].apply(self.tz_offset_to_minutes)
 
+        df = self.split_column_names(df, endpoint)
+        df = self.rename_id_column(df, endpoint) 
         
         model_class = model_classes[endpoint]
         col_types = self.columns_by_type(model_class)
-        print(col_types)
 
         df = self.coerce_datetime(df, col_types['datetime'])
         df = self.coerce_integer(df, col_types['integer'])
         df = self.coerce_float(df, col_types['float'])
         df = self.coerce_string(df, col_types['string'])
         df = self.coerce_boolean(df, col_types['boolean'])
-
-        
 
         return df
 

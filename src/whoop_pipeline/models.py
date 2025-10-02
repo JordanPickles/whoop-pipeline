@@ -25,7 +25,7 @@ class Sleep(Base):
     end: Mapped[DateTime]
     timezone_offset: Mapped[int]
     nap: Mapped[bool]
-    state: Mapped[str| None] = mapped_column(String, nullable=True)
+    score_state: Mapped[str| None] = mapped_column(String, nullable=True)
     total_in_bed_time_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
     total_awake_time_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
     total_no_data_time_milli: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -54,7 +54,7 @@ class Recovery(Base):
     user_id: Mapped[int]
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
-    state: Mapped[str| None] = mapped_column(String, nullable=True)
+    score_state: Mapped[str| None] = mapped_column(String, nullable=True)
     user_calibrating: Mapped[bool]
     recovery_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     resting_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -76,7 +76,7 @@ class Workout(Base):
     end: Mapped[DateTime]
     timezone_offset: Mapped[int]
     sport_name: Mapped[str]
-    state: Mapped[str| None] = mapped_column(String, nullable=True)
+    score_state: Mapped[str| None] = mapped_column(String, nullable=True)
     sport_id: Mapped[int]
     strain: Mapped[float | None] = mapped_column(Float, nullable=True)
     average_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -103,7 +103,7 @@ class Cycle(Base):
     start: Mapped[DateTime]
     end: Mapped[DateTime]
     timezone_offset: Mapped[int]
-    state: Mapped[str| None] = mapped_column(String, nullable=True)
+    score_state: Mapped[str| None] = mapped_column(String, nullable=True)
     strain: Mapped[float | None] = mapped_column(Float, nullable=True)
     kilojoule: Mapped[float | None] = mapped_column(Float, nullable=True)
     average_heart_rate: Mapped[int | None] = mapped_column(Integer, nullable=True)
