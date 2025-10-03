@@ -4,6 +4,7 @@ from whoop_pipeline.config import settings
 from whoop_pipeline.auth import WhoopClient
 from whoop_pipeline.database import WhoopDB
 from whoop_pipeline.data_cleaning import WhoopDataCleaner
+from whoop_pipeline.test_data_quality import DataValidationTests
 import whoop_pipeline.models as WhoopModels
 import pandas as pd
 import time
@@ -16,6 +17,7 @@ class WhoopDataIngestor():
         self.cycles_base_url = settings.whoop_api_cycles_base_url
         self.whoop_data_cleaner = WhoopDataCleaner()
         self.whoop_database = WhoopDB()
+        self.data_quality_tester = DataValidationTests()
 
     def get_json(self, base_url:str, base_cycles_url:str, endpoint:str, params:dict) -> dict:
         """Fetches JSON data from the Whoop API."""
