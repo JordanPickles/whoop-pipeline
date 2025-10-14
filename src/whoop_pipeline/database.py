@@ -12,6 +12,7 @@ from typing import Dict, List
 class WhoopDB():
     def __init__(self):
         self.db_url = settings.db_url
+        print(self.db_url)
         self.engine = create_engine(self.db_url)
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
 

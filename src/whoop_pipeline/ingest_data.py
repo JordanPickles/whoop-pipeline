@@ -17,7 +17,12 @@ class WhoopDataIngestor():
         self.cycles_base_url = settings.whoop_api_cycles_base_url
         self.whoop_data_cleaner = WhoopDataCleaner()
         self.whoop_database = WhoopDB()
-        self.data_quality_tester = DataValidationTests()
+        self.data_quality_validator = DataValidationTests()
+        self.model_classes = {'cycle': WhoopModels.Cycle,
+                'activity/sleep': WhoopModels.Sleep, 
+                'recovery': WhoopModels.Recovery,
+                'activity/workout': WhoopModels.Workout
+                } # returns the table schema from models.py based on endpoint
 
     def get_json(self, base_url:str, base_cycles_url:str, endpoint:str, params:dict) -> dict:
         """Fetches JSON data from the Whoop API."""
@@ -78,7 +83,7 @@ class WhoopDataIngestor():
         df =  pd.json_normalize(response_json_list)
         
         return df
-
+    
 
     def data_pipeline(self, start_date:str, end_date:str):
         """Retrieves data from Whoop API and saves to CSV files."""
@@ -91,13 +96,16 @@ class WhoopDataIngestor():
         
         params = {'limit': 25, 'start': start_date, 'end': end_date}
 
-
         for endpoint_key, endpoint_value in endpoints.items(): 
             json_data = self.get_json(self.base_url, self.cycles_base_url, endpoint_value, params) 
             df = self.paginator(json_data, endpoint_value, params['limit'] , params['start'], params['end'])            
-            df = self.whoop_data_cleaner.clean_data(df, endpoint_value)
-            df.to_csv(f"data/{endpoint_key}_data.csv", index=False)
-            self.whoop_database.upsert_data(df, endpoint_key)
+            df = self.whoop_data_cleaner.clean_data(df, endpoint_value, self.model_classes[endpoint_value])
+            print(type(self.model_classes[endpoint_value]))
+            while True:
+                self.data_quality_validator.assertion_tests(df, self.model_classes[endpoint_value])
+                df.to_csv(f"data/{endpoint_key}_data.csv", index=False)
+
+                self.whoop_database.upsert_data(df, endpoint_key)
         
 
    

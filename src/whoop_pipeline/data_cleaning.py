@@ -1,5 +1,4 @@
 import pandas as pd
-from whoop_pipeline.models import Sleep, Recovery, Workout, Cycle
 from sqlalchemy import Integer, BigInteger, Float, Numeric, DateTime, String, Boolean
 
 class WhoopDataCleaner():
@@ -92,14 +91,8 @@ class WhoopDataCleaner():
             df = df.rename(columns={'id': f"{endpoint.split('/')[-1]}_id"}) # gets last part of endpoint for id renaming
         return df
     
-    def clean_data(self, df:pd.DataFrame, endpoint:str) -> pd.DataFrame:
-        """Cleans data based on the specified data type."""
-        model_classes = {'cycle': Cycle,
-                'activity/sleep': Sleep, 
-                'recovery': Recovery,
-                'activity/workout': Workout
-                } # returns the table schema from models.py based on endpoint
-        
+    def clean_data(self, df:pd.DataFrame, endpoint:str, model_class) -> pd.DataFrame:
+        """Cleans data based on the specified data type."""        
 
         if 'timezone_offset' in df.columns:
             df['timezone_offset'] = df['timezone_offset'].apply(self.tz_offset_to_minutes)
@@ -107,7 +100,7 @@ class WhoopDataCleaner():
         df = self.split_column_names(df, endpoint)
         df = self.rename_id_column(df, endpoint) 
         
-        model_class = model_classes[endpoint]
+
         col_types = self.columns_by_type(model_class)
 
         df = self.coerce_datetime(df, col_types['datetime'])
@@ -117,7 +110,7 @@ class WhoopDataCleaner():
         df = self.coerce_boolean(df, col_types['boolean'])
 
         return df
-
+    
 if __name__ == '__main__':
     cleaner = WhoopDataCleaner()
     schema = cleaner.classify_sqla_type('workout')
