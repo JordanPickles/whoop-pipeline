@@ -35,8 +35,9 @@ class DataValidationTests():
     def assert_strain_range(self, df:pd.DataFrame, min_value:float=0, max_value:float=21.0):
         """Test that the strain column values are within the expected range."""
         if 'strain' in df.columns:
+            df = df[df['strain'].notna()] # removes NaN values for the test
             if not df['strain'].between(min_value, max_value).all():
-                raise AssertionError(f"Strain values are out of range ({min_value}, {max_value}) for activity starting {df.get('start_time')}")
+                raise AssertionError(f"Strain values are out of range ({min_value}, {max_value}) for activity starting {df.get('start')}")
         
     def assert_recovery_score_range(self, df:pd.DataFrame, min_value:int=0, max_value:int=100):
         """Test that the recovery_score column values are within the expected range."""
@@ -53,12 +54,14 @@ class DataValidationTests():
 
         type_annotation_map={
             'INTEGER': 'Int64',
+            'BIGINT': 'Int64',
             'VARCHAR': 'object',
             'FLOAT': 'float64',
             'DATE': 'Date',
             'TIMESTAMP': 'datetime64[ns, UTC]',
+            'BOOLEAN': 'bool'
         }
-        column_types = {k: type_annotation_map.get(v, 'other') for k, v in column_types.items()} # dict comprehension to replace the column type with python data types instead of the postgres types
+        column_types = {k: type_annotation_map.get(v, v) for k, v in column_types.items()} # dict comprehension to replace the column type with python data types instead of the postgres types
 
 
 

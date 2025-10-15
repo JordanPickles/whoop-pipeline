@@ -14,60 +14,65 @@ class WhoopDB():
         self.db_url = settings.db_url
         print(self.db_url)
         self.engine = create_engine(self.db_url)
-        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
 
     def create_tables(self):
         """Creates database tables based on the defined models if they don't already exist."""
         Base.metadata.create_all(bind=self.engine)
 
     def get_session(self):
-        return self.SessionLocal()
+        """Creates a new database session."""
+        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+        return  SessionLocal
     
-    def upsert_data(self, df:pd.DataFrame , table_name:str):
+    def get_model_class_data(self, model_class):
+        """Returns the table, primary key(s) and column names for a given SQLAlchemy model class."""
+        table = model_class.__table__
+        primary_key = [key.name for key in table.primary_key.columns]
+        table_cols = [col.name for col in table.columns]
+        return table, primary_key, table_cols
+    
+    def process_dataframe(self, df:pd.DataFrame, table_cols:list) -> list:
+        """Processes the DataFrame to match the database table schema."""
+
+        df = df[table_cols] # Keep only columns that exist in the table
+        df = df.where(df.notna(), None) # Replace pandas NaN with None for SQL compatibility
+        rows = df.to_dict(orient='records') # Convert DataFrame to list of dictionaries for upserting to database
+
+        return rows
+    
+    def upsert_data(self, df:pd.DataFrame, model_class, table_name:str):
 
         """Upserts data into the specified table. Checks for existing records based on primary key(s) and updates them if they exist, otherwise inserts new records."""
 
-        # Returns a dict of table models
         if df is None or df.empty:
             return None
-
-        tables = {
-            'fact_cycle': Cycle.__table__,
-            'fact_activity_sleep': Sleep.__table__,
-            'fact_recovery': Recovery.__table__,
-            'fact_workout': Workout.__table__
-        }
-
-        primary_keys = {
-            'fact_cycle': ['cycle_id'],
-            'fact_activity_sleep': ['sleep_id'],
-            'fact_recovery': ['sleep_id'],
-            'fact_workout': ['workout_id']
-        }
-
-        table = tables[table_name] #returns the table model
-        table_cols = {c.name for c in table.columns} # list of columns in the dataframe
         
-        rows = [{k: v for k, v in r.items() if k in table_cols}
-            for r in df.to_dict(orient='records')]
+        table, primary_key, table_cols = self.get_model_class_data(model_class)
+        rows = self.process_dataframe(df, table_cols)
 
         if not rows:
             return None  # nothing matches table columns
+         
+        statement = insert(table).values(rows) # Create an insert statement with the data
         
+        updatable = [c for c in table_cols if c not in primary_key] # All columns except primary keys as that will remain the same
         
-
-         # Create an insert statement with the data
-        statement = insert(table).values(rows)
-        
-        updatable = [c for c in table_cols if c not in primary_keys[table_name]]
-
-        # Create the upsert (insert or update) statement. This replaces any existing data records with the new data
+        # Create the upsert statement. This replaces any existing data records with the new data or just adds them should they not already exist. Effectively Updating or Inserting.
         upsert_statement = statement.on_conflict_do_update(
-            index_elements= primary_keys[table_name], # Primary Key Column names
-            set_={c: statement.excluded[c] for c in updatable} # Updates all columns from row except primary
+            index_elements= primary_key, # Primary Key Column name
+            set_={c: statement.excluded[c] for c in updatable} # Updates all columns from rows except primary key
         )
-        with self.engine.begin() as conn:
-            conn.execute(upsert_statement)
+        
+        session = self.get_session()
+        session = session()
+        try:
+            session.execute(upsert_statement)
+            session.commit()
+            print(f"Upserted {len(rows)} records into {table_name}.")
+        except Exception as e:
+            session.rollback()
+            print(f"Error upserting data into {table_name}: {e}")
+
 
         
 

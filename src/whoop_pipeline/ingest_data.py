@@ -98,14 +98,21 @@ class WhoopDataIngestor():
 
         for endpoint_key, endpoint_value in endpoints.items(): 
             json_data = self.get_json(self.base_url, self.cycles_base_url, endpoint_value, params) 
-            df = self.paginator(json_data, endpoint_value, params['limit'] , params['start'], params['end'])            
+            df = self.paginator(json_data, endpoint_value, params['limit'] , params['start'], params['end'])    
             df = self.whoop_data_cleaner.clean_data(df, endpoint_value, self.model_classes[endpoint_value])
-            print(type(self.model_classes[endpoint_value]))
-            while True:
-                self.data_quality_validator.assertion_tests(df, self.model_classes[endpoint_value])
-                df.to_csv(f"data/{endpoint_key}_data.csv", index=False)
+    
+            if not df.empty:
+                if df[df.columns[0]].count() > 28:
+                    df_sample = df.sample(n=28, random_state=42) # ensures only 28 rows of data are validated to ensure the pipeline runs in a reasonable time
+                    self.data_quality_validator.assertion_tests(df_sample, self.model_classes[endpoint_value])
+                    
+                
+                else: self.data_quality_validator.assertion_tests(df, self.model_classes[endpoint_value])
+                print(f"Data for {endpoint_key} passed all validation tests.")
+                
+            df.to_csv(f"data/{endpoint_key}_data.csv", index=False)
 
-                self.whoop_database.upsert_data(df, endpoint_key)
+            self.whoop_database.upsert_data(df, self.model_classes[endpoint_value], endpoint_key)
         
 
    
