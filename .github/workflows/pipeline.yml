@@ -1,0 +1,37 @@
+name: whoop-pipeline
+
+on:
+  schedule:
+    - cron : '0 17 * * *' # Runs daily at 5pm UTC
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  run:
+    runs_on: ubuntu-latest
+    
+    env:
+      TZ: Europe/London
+      WHOOP_CLIENT_ID:     ${{ secrets.WHOOP_CLIENT_ID }}
+      WHOOP_CLIENT_SECRET: ${{ secrets.WHOOP_CLIENT_SECRET }}
+      WHOOP_API_BASE_URL:  ${{ secrets.WHOOP_API_BASE_URL }}
+      DB_URL:              ${{ secrets.DB_URL }}
+      WHOOP_REFRESH_TOKEN: ${{ secrets.WHOOP_REFRESH_TOKEN }}  # optional
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Pipeline
+        run: |
+          export PYTHONPATH=src
+          python -m whoop_pipeline.ingest_data
+        
