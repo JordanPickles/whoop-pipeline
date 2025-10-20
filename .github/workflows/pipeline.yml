@@ -1,9 +1,9 @@
-name: run whoop-pipeline
+name: Run Whoop Pipeline
 
 on:
-  workflow_dispatch: # Allows manual triggering of the workflow
+  workflow_dispatch: {} # Allows manual triggering of the workflow
   schedule:
-    - cron: '45 20 * * *' # Runs daily at 9pm UTC
+    - cron: '11 21 * * *' # Runs daily at 9pm UTC
 jobs:
   run:
     runs-on: ubuntu-latest
