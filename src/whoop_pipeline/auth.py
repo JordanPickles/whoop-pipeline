@@ -174,7 +174,7 @@ class WhoopClient():
         """Get a valid access token, refreshing it if necessary with OAuth."""
         tokens = self.load_tokens()
 
-        if int(time.time()) >= tokens.get("expires_at", 0):
+        if int(time.time()) >= tokens.get("expires_at", 0) or not tokens:
             print("Access token expired or about to expire, refreshing...")
             tokens = self.refresh_access_token(tokens)
             
