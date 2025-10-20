@@ -16,6 +16,7 @@ class WhoopClient():
         self.whoop_scope = settings.whoop_scope
         self.whoop_token_url = settings.whoop_token_url
         self.whoop_client_secret = settings.whoop_client_secret
+        self.whoop_refresh_token = settings.whoop_refresh_token
 
     def build_url_auth(self) -> str:
         """Build the URL for the OAuth2 authorization request."""
@@ -117,7 +118,8 @@ class WhoopClient():
     
     def refresh_access_token(self, tokens: dict) -> dict:
 
-        refresh_token = tokens.get('refresh_token')
+        refresh_token = self.whoop_refresh_token or tokens.get("refresh_token")
+
         if not refresh_token:
             raise RuntimeError("No refresh_token available in tokens. Re-authentication required.")
 
@@ -160,6 +162,7 @@ class WhoopClient():
             raise RuntimeError("No saved tokens found. Please authenticate first.")
 
     def authorisation(self):
+        """Perform the OAuth2 authorization flow to obtain tokens."""
         auth_url = self.build_url_auth()
         webbrowser.open(auth_url)
         code = self.run_local_server_for_code(expected_state="random_state_string", timeout=180)
@@ -168,6 +171,7 @@ class WhoopClient():
         return tokens
         
     def get_live_access_token(self):
+        """Get a valid access token, refreshing it if necessary with OAuth."""
         tokens = self.load_tokens()
 
         if int(time.time()) >= tokens.get("expires_at", 0):
@@ -175,7 +179,7 @@ class WhoopClient():
             tokens = self.refresh_access_token(tokens)
             
             if not tokens:
-                tokens = self.authorisation
+                tokens = self.authorisation()
 
             self.save_tokens(tokens)
         else:
