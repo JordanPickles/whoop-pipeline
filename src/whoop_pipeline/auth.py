@@ -118,7 +118,7 @@ class WhoopClient():
     
     def refresh_access_token(self, tokens: dict) -> dict:
 
-        refresh_token = self.whoop_refresh_token or tokens.get("refresh_token")
+        refresh_token = self.whoop_refresh_token if self.whoop_refresh_token else tokens.get("refresh_token")
 
         if not refresh_token:
             raise RuntimeError("No refresh_token available in tokens. Re-authentication required.")
@@ -171,10 +171,10 @@ class WhoopClient():
         return tokens
         
     def get_live_access_token(self):
-        """Get a valid access token, refreshing it if necessary with OAuth."""
-        tokens = self.load_tokens()
+        """Get a valid access token, refreshing it if necessary with OAuth."""      
 
-        if int(time.time()) >= tokens.get("expires_at", 0) or not tokens:
+        tokens = self.load_tokens()
+        if int(time.time()) >= tokens.get("expires_at", 0) or tokens is None:
             print("Access token expired or about to expire, refreshing...")
             tokens = self.refresh_access_token(tokens)
             
