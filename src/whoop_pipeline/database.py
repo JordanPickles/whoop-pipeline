@@ -8,6 +8,7 @@ import os
 import pandas as pd
 import datetime as dt
 from typing import Dict, List
+import psycopg2
 
 class WhoopDB():
     def __init__(self):
