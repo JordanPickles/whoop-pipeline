@@ -177,6 +177,8 @@ class WhoopClient():
     def get_live_access_token(self):
         """Get a valid access token, refreshing it if necessary with OAuth."""      
 
+        print(f"client ID: {self.whoop_client_id}, Client SECRET: {self.whoop_client_secret},redirect URI: {self.whoop_redirect_uri}, scope: {self.whoop_scope}, refresh token: {self.whoop_refresh_token}")
+  
         if os.getenv("GITHUB_ACTIONS") == "true":
             print("Running in GitHub Actions environment, using environment variables for tokens.")
             tokens = None

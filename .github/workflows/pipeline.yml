@@ -23,17 +23,17 @@ jobs:
 
       - name: Debug secrets presence (lengths only)
         run: |
-          echo "WHOOP_TOKEN_URL len: ${#WHOOP_TOKEN_URL}"
-          echo "WHOOP_REFRESH_TOKEN len: ${#WHOOP_REFRESH_TOKEN}"
-          echo "WHOOP_CLIENT_ID len: ${#WHOOP_CLIENT_ID}"
-          echo "WHOOP_CLIENT_SECRET len: ${#WHOOP_CLIENT_SECRET}"
+          echo "WHOOP_TOKEN_URL: ${#WHOOP_TOKEN_URL}"
+          echo "WHOOP_REFRESH_TOKEN: ${#WHOOP_REFRESH_TOKEN}"
+          echo "WHOOP_CLIENT_ID: ${#WHOOP_CLIENT_ID}"
+          echo "WHOOP_CLIENT_SECRET: ${#WHOOP_CLIENT_SECRET}"
         env:
           WHOOP_TOKEN_URL:     ${{ secrets.WHOOP_TOKEN_URL }}
           WHOOP_REFRESH_TOKEN: ${{ secrets.WHOOP_REFRESH_TOKEN }}
           WHOOP_CLIENT_ID:     ${{ secrets.WHOOP_CLIENT_ID }}
           WHOOP_CLIENT_SECRET: ${{ secrets.WHOOP_CLIENT_SECRET }}
 
-          
+
       - name: Run Pipeline
         env:
           TZ: Europe/London
