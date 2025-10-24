@@ -9,6 +9,7 @@ import pandas as pd
 import datetime as dt
 from typing import Dict, List
 import psycopg2
+from sqlalchemy import text
 
 class WhoopDB():
     def __init__(self):
@@ -80,7 +81,7 @@ class WhoopDB():
     def get_max_date(self):
         """Fetches the maximum created_at date from the fact_cycle table."""    
         connection = self.engine.connect()
-        max_date = pd.read_sql("SELECT MAX(created_at) as max_date FROM fact_cycle", con=connection)
+        max_date = pd.read_sql(text("SELECT MAX(created_at) as max_date FROM fact_cycle"), con=connection)
         return max_date['max_date'][0]
     
 
