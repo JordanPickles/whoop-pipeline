@@ -174,19 +174,19 @@ class WhoopClient():
     def get_live_access_token(self):
         """Get a valid access token, refreshing it if necessary with OAuth."""      
         ## need to add something here to work when its run from github actions whereby it cannot access the secrets.json file
-        if os.getenv("GITHUB_ACTIONS") == "true":
+        if os.getenv("GITHUB_ACTIONS").lower() == "true":
             print("Running in GitHub Actions environment, using environment variables for tokens.")
             tokens = None
+            tokens = self.refresh_access_token(tokens)
+            print("Access token expired or about to expire, refreshing...")
         else:
             tokens = self.load_tokens()
+            if int(time.time()) >= tokens.get("expires_at", 0):
+                print("Access token expired or about to expire, refreshing...")
+                tokens = self.refresh_access_token(tokens)
             
-        if int(time.time()) >= tokens.get("expires_at", 0) or tokens is None:
-            print("Access token expired or about to expire, refreshing...")
-            tokens = self.refresh_access_token(tokens)
-            
-            if not tokens:
-                tokens = self.authorisation()
-
+        if not tokens:
+            tokens = self.authorisation()
             self.save_tokens(tokens)
         else:
             print("Access token is still valid.")
