@@ -7,6 +7,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import time
 import threading
 import json
+import os
 
 
 class WhoopClient():
@@ -172,8 +173,13 @@ class WhoopClient():
         
     def get_live_access_token(self):
         """Get a valid access token, refreshing it if necessary with OAuth."""      
-
-        tokens = self.load_tokens()
+        ## need to add something here to work when its run from github actions whereby it cannot access the secrets.json file
+        if os.getenv("GITHUB_ACTIONS") == "true":
+            print("Running in GitHub Actions environment, using environment variables for tokens.")
+            tokens = None
+        else:
+            tokens = self.load_tokens()
+            
         if int(time.time()) >= tokens.get("expires_at", 0) or tokens is None:
             print("Access token expired or about to expire, refreshing...")
             tokens = self.refresh_access_token(tokens)
