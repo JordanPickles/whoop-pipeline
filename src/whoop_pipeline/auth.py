@@ -118,20 +118,23 @@ class WhoopClient():
         return response.json()
     
     def refresh_access_token(self, tokens: dict) -> dict:
-
-        refresh_token = self.whoop_refresh_token if self.whoop_refresh_token else tokens.get("refresh_token")
+        if tokens is None:
+            refresh_token = self.whoop_refresh_token
+        else: 
+            refresh_token = tokens.get("refresh_token")
 
         if not refresh_token:
             raise RuntimeError("No refresh_token available in tokens. Re-authentication required.")
 
+
         
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         data = {"grant_type": "refresh_token",
-                "refresh_token": refresh_token,
-                "client_id": self.whoop_client_id,
-                "client_secret": self.whoop_client_secret,
+                "refresh_token": refresh_token.strip(),
+                "client_id": self.whoop_client_id.strip(),
+                "client_secret": self.whoop_client_secret.strip(),
                 }
-        
+        print(data.items())
         response = requests.post(str(self.whoop_token_url), headers=headers, data=data)
         
         if response.status_code >= 400:
@@ -173,13 +176,14 @@ class WhoopClient():
         
     def get_live_access_token(self):
         """Get a valid access token, refreshing it if necessary with OAuth."""      
-        ## need to add something here to work when its run from github actions whereby it cannot access the secrets.json file
-        if os.getenv("GITHUB_ACTIONS").lower() == "true":
+
+        if os.getenv("GITHUB_ACTIONS") == "true":
             print("Running in GitHub Actions environment, using environment variables for tokens.")
             tokens = None
             tokens = self.refresh_access_token(tokens)
             print("Access token expired or about to expire, refreshing...")
         else:
+            print("Checking for existing tokens...")
             tokens = self.load_tokens()
             if int(time.time()) >= tokens.get("expires_at", 0):
                 print("Access token expired or about to expire, refreshing...")
@@ -194,8 +198,9 @@ class WhoopClient():
 
 if __name__ == "__main__":
     whoop_client = WhoopClient()
-    
-    tokens = whoop_client.get_live_access_token()
+    whoop_client.authorisation()
+    tokens = whoop_client.load_tokens()
+    # whoop_client.get_live_access_token()
     print("\nToken response (summary):")
     print("  has access_token?  ", "access_token" in tokens)
     print("  has refresh_token? ", "refresh_token" in tokens)
