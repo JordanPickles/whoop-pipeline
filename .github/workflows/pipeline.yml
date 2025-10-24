@@ -28,25 +28,25 @@ jobs:
           echo "WHOOP_CLIENT_ID: ${#WHOOP_CLIENT_ID}"
           echo "WHOOP_CLIENT_SECRET: ${#WHOOP_CLIENT_SECRET}"
         env:
-          WHOOP_TOKEN_URL:     ${{ secrets.WHOOP_TOKEN_URL }}
-          WHOOP_REFRESH_TOKEN: ${{ secrets.WHOOP_REFRESH_TOKEN }}
-          WHOOP_CLIENT_ID:     ${{ secrets.WHOOP_CLIENT_ID }}
-          WHOOP_CLIENT_SECRET: ${{ secrets.WHOOP_CLIENT_SECRET }}
+          WHOOP_TOKEN_URL:     ${{ vars.WHOOP_TOKEN_URL }}
+          WHOOP_REFRESH_TOKEN: ${{ vars.WHOOP_REFRESH_TOKEN }}
+          WHOOP_CLIENT_ID:     ${{ vars.WHOOP_CLIENT_ID }}
+          WHOOP_CLIENT_SECRET: ${{ vars.WHOOP_CLIENT_SECRET }}
 
 
       - name: Run Pipeline
         env:
           TZ: Europe/London
-          WHOOP_CLIENT_ID:     ${{ secrets.WHOOP_CLIENT_ID }}
-          WHOOP_CLIENT_SECRET: ${{ secrets.WHOOP_CLIENT_SECRET }}
-          WHOOP_API_BASE_URL:  ${{ secrets.WHOOP_API_BASE_URL }}
-          WHOOP_API_CYCLES_BASE_URL: ${{ secrets.WHOOP_API_CYCLES_BASE_URL }}
-          DB_URL:              ${{ secrets.DB_URL }}
-          WHOOP_REFRESH_TOKEN: ${{ secrets.WHOOP_REFRESH_TOKEN }} 
-          WHOOP_REDIRECT_URI:  ${{ secrets.WHOOP_REDIRECT_URI }}
-          WHOOP_AUTH_URL:      ${{ secrets.WHOOP_AUTH_URL }}
-          WHOOP_TOKEN_URL:     ${{ secrets.WHOOP_TOKEN_URL }}
-          WHOOP_SCOPE:        ${{ secrets.WHOOP_SCOPE }}
+          WHOOP_CLIENT_ID:     ${{ vars.WHOOP_CLIENT_ID }}
+          WHOOP_CLIENT_SECRET: ${{ vars.WHOOP_CLIENT_SECRET }}
+          WHOOP_API_BASE_URL:  ${{ vars.WHOOP_API_BASE_URL }}
+          WHOOP_API_CYCLES_BASE_URL: ${{ vars.WHOOP_API_CYCLES_BASE_URL }}
+          DB_URL:              ${{ vars.DB_URL }}
+          WHOOP_REFRESH_TOKEN: ${{ vars.WHOOP_REFRESH_TOKEN }} 
+          WHOOP_REDIRECT_URI:  ${{ vars.WHOOP_REDIRECT_URI }}
+          WHOOP_AUTH_URL:      ${{ vars.WHOOP_AUTH_URL }}
+          WHOOP_TOKEN_URL:     ${{ vars.WHOOP_TOKEN_URL }}
+          WHOOP_SCOPE:        ${{ vars.WHOOP_SCOPE }}
         run: |
            PYTHONPATH=src python -m whoop_pipeline.ingest_data
         
