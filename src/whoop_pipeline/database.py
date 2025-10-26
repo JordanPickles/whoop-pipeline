@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import insert
 from whoop_pipeline.models import Base, Sleep, Recovery, Cycle, Workout
@@ -10,11 +10,12 @@ import datetime as dt
 from typing import Dict, List
 import psycopg2
 from sqlalchemy import text
+import time
+from datetime import date, timedelta, datetime as dt
 
 class WhoopDB():
     def __init__(self):
         self.db_url = settings.db_url
-        print(self.db_url)
         self.engine = create_engine(self.db_url)
 
     def create_tables(self):
@@ -75,8 +76,49 @@ class WhoopDB():
             session.rollback()
             print(f"Error upserting data into {table_name}: {e}")
 
+    def get_access_token_table(self):
+        """Creates the access_tokens table if it doesn't exist."""
+        metadata = MetaData()
+        return Table("access_tokens", metadata, autoload_with=self.engine)
 
+    def upsert_access_token(self, tokens:Dict, provider: str = "whoop"):
+        """Upserts the access token into the access_tokens table.""" 
         
+        tokens_updated = {"provider": provider, **tokens} # Adds the provider field and follows that with the tokens dict passed into the function
+        
+        expires_at_ts = int(time.time()) + int(tokens.get("expires_in", 0)) - 10
+        tokens_updated["expires_at"] = pd.to_datetime(expires_at_ts, format= '%Y%m%d%H%M%S') # stores as datetime
+        
+        print(tokens_updated.items())
+        access_token_table = self.get_access_token_table()
+        print(access_token_table.columns)
+        
+        statement = insert(access_token_table).values(tokens_updated)
+
+        upsert_statement = statement.on_conflict_do_update(
+            index_elements= ['provider'], # Primary Key Column name
+            set_={c: statement.excluded[c] for c in tokens_updated.keys() if c != "provider"} # Updates all columns except primary key
+        )
+
+        session = self.get_session()
+        session = session()
+        try:
+            session.execute(upsert_statement)
+            session.commit()
+            print(f"Upserted access token for {provider}.")
+        except Exception as e:
+            session.rollback()
+            print(f"Error upserting access token for {provider}: {e}")
+
+    def get_access_token(self, provider: str = "whoop") -> Dict:
+        """Fetches the access token from the access_tokens table."""
+        connection = self.engine.connect()
+        token_data = pd.read_sql(text("SELECT * FROM ACCESS_TOKENS"), con=connection)
+        
+        if not token_data.empty:
+            return token_data.iloc[0].to_dict() # convert first row to dict
+        else:
+            return {}
 
     def get_max_date(self):
         """Fetches the maximum created_at date from the fact_cycle table."""    
