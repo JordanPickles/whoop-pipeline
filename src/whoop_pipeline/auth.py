@@ -163,7 +163,7 @@ class WhoopClient():
             tokens = self.authorisation()
             WhoopDB().upsert_access_token(tokens, provider="whoop")
 
-        elif int(time.time()) >= int(pd.to_datetime(tokens.get('expires_at')).timestamp()) if tokens.get('expires_at') else 0:
+        elif int(time.time()) >= tokens.get('expires_at'):
             print("Access token expired or about to expire, refreshing...")
             tokens = self.refresh_access_token(tokens)
             WhoopDB().upsert_access_token(tokens, provider="whoop")

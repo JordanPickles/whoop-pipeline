@@ -86,8 +86,7 @@ class WhoopDB():
         
         tokens_updated = {"provider": provider, **tokens} # Adds the provider field and follows that with the tokens dict passed into the function
         
-        expires_at_ts = int(time.time()) + int(tokens.get("expires_in", 0)) - 10
-        tokens_updated["expires_at"] = pd.to_datetime(expires_at_ts, format= '%Y%m%d%H%M%S') # stores as datetime
+        tokens_updated["expires_at"]  = int(time.time()) + int(tokens.get("expires_in", 0)) - 10
         
         print(tokens_updated.items())
         access_token_table = self.get_access_token_table()
