@@ -1,6 +1,7 @@
 import urllib.parse
 from urllib.parse import urlparse, parse_qs
 from whoop_pipeline.config import settings
+from whoop_pipeline.database import WhoopDB
 import requests
 import webbrowser
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -17,7 +18,6 @@ class WhoopClient():
         self.whoop_scope = settings.whoop_scope
         self.whoop_token_url = settings.whoop_token_url
         self.whoop_client_secret = settings.whoop_client_secret
-        self.whoop_refresh_token = settings.whoop_refresh_token
 
     def build_url_auth(self) -> str:
         """Build the URL for the OAuth2 authorization request."""
@@ -118,15 +118,11 @@ class WhoopClient():
         return response.json()
     
     def refresh_access_token(self, tokens: dict) -> dict:
-        if tokens is None:
-            refresh_token = self.whoop_refresh_token
-        else: 
-            refresh_token = tokens.get("refresh_token")
-
+        """Refresh the access token using the refresh token."""
+        
+        refresh_token = tokens.get("refresh_token")
         if not refresh_token:
-            raise RuntimeError("No refresh_token available in tokens. Re-authentication required.")
-
-
+            raise ValueError("No refresh token available to refresh access token.")
         
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         data = {"grant_type": "refresh_token",
@@ -146,24 +142,7 @@ class WhoopClient():
             return None
 
         return response.json()
-    
-    def save_tokens(self, tokens: dict):
-        """Save tokens to a secure location (e.g., database or encrypted file)."""
-        token_path = ".secrets/tokens.json"
-        tokens["expires_at"] = int(time.time()) + int(tokens.get("expires_in", 0)) -3 # 3 seconds of leeway
-        with open(token_path, "w") as f:
-            json.dump(tokens, f)
-        # Implement your secure storage mechanism here
-    
-    def load_tokens(self) -> dict:
-        """Load tokens from secure location."""
-        token_path = ".secrets/tokens.json"
-        try:
-            with open(token_path, "r") as f:
-                tokens = json.load(f)
-            return tokens
-        except FileNotFoundError:
-            raise RuntimeError("No saved tokens found. Please authenticate first.")
+
 
     def authorisation(self):
         """Perform the OAuth2 authorization flow to obtain tokens."""
@@ -171,41 +150,25 @@ class WhoopClient():
         webbrowser.open(auth_url)
         code = self.run_local_server_for_code(expected_state="random_state_string", timeout=180)
         tokens = self.exchange_code_for_token(code)
-        self.save_tokens(tokens)
+        
         return tokens
         
     def get_live_access_token(self):
         """Get a valid access token, refreshing it if necessary with OAuth."""      
 
-        print(f"client ID: {self.whoop_client_id}, Client SECRET: {self.whoop_client_secret},redirect URI: {self.whoop_redirect_uri}, scope: {self.whoop_scope}, refresh token: {self.whoop_refresh_token}")
-  
-        if os.getenv("GITHUB_ACTIONS") == "true":
-            print("Running in GitHub Actions environment, using environment variables for tokens.")
-            tokens = None
-            tokens = self.refresh_access_token(tokens)
-            print("Access token expired or about to expire, refreshing...")
-        else:
-            print("Checking for existing tokens...")
-            tokens = self.load_tokens()
-            if int(time.time()) >= tokens.get("expires_at", 0):
-                print("Access token expired or about to expire, refreshing...")
-                tokens = self.refresh_access_token(tokens)
-            
-        if not tokens:
+        tokens = WhoopDB().get_access_token(provider="whoop")
+        
+        if tokens == {}:
             tokens = self.authorisation()
-            self.save_tokens(tokens)
+            WhoopDB().upsert_access_token(tokens, provider="whoop")
+
+        elif time.time() >= tokens.get("expires_at", 0):
+            print("Access token expired or about to expire, refreshing...")
+            tokens = self.refresh_access_token(tokens)
+            WhoopDB().upsert_access_token(tokens, provider="whoop")
         else:
             print("Access token is still valid.")
         return tokens
 
 if __name__ == "__main__":
     whoop_client = WhoopClient()
-    whoop_client.authorisation()
-    tokens = whoop_client.load_tokens()
-    # whoop_client.get_live_access_token()
-    print("\nToken response (summary):")
-    print("  has access_token?  ", "access_token" in tokens)
-    print("  has refresh_token? ", "refresh_token" in tokens)
-    print("  expires_in (secs): ", tokens.get("expires_in"))
-    print(tokens)
-    print(tokens['access_token'])
