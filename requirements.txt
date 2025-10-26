@@ -18,7 +18,7 @@ numpy==1.23.4
     # via
     #   -r requirements.in
     #   pandas
-pandas==1.5.2
+pandas>=2.0
     # via -r requirements.in
 psycopg2-binary==2.9.11
     # via -r requirements.in
