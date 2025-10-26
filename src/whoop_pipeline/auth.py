@@ -9,6 +9,7 @@ import time
 import threading
 import json
 import os
+import pandas as pd
 
 
 class WhoopClient():
@@ -157,12 +158,12 @@ class WhoopClient():
         """Get a valid access token, refreshing it if necessary with OAuth."""      
 
         tokens = WhoopDB().get_access_token(provider="whoop")
-        
+
         if tokens == {}:
             tokens = self.authorisation()
             WhoopDB().upsert_access_token(tokens, provider="whoop")
 
-        elif time.time() >= tokens.get("expires_at", 0):
+        elif int(time.time()) >= int(pd.to_datetime(tokens.get('expires_at')).timestamp()) if tokens.get('expires_at') else 0:
             print("Access token expired or about to expire, refreshing...")
             tokens = self.refresh_access_token(tokens)
             WhoopDB().upsert_access_token(tokens, provider="whoop")
