@@ -41,20 +41,15 @@ class WhoopDB():
         rows = df.to_dict(orient='records') # Convert DataFrame to list of dictionaries for upserting to database
 
         return rows
-    
-    def upsert_data_statement(self, df:pd.DataFrame, model_class, table_name:str):
 
+    def upsert_data(self, table, primary_key:list, table_cols:list, rows:dict, session=None):
         """Upserts data into the specified table. Checks for existing records based on primary key(s) and updates them if they exist, otherwise inserts new records."""
-
-        if df is None or df.empty:
-            return None
-        
-        table, primary_key, table_cols = self.get_model_class_data(model_class)
-        rows = self.process_dataframe(df, table_cols)
 
         if not rows:
             return None  # nothing matches table columns
-         
+        
+        table_name = table.name
+
         statement = insert(table).values(rows) # Create an insert statement with the data
         
         updatable = [c for c in table_cols if c not in primary_key] # All columns except primary keys as that will remain the same
@@ -65,12 +60,20 @@ class WhoopDB():
             set_={c: statement.excluded[c] for c in updatable} # Updates all columns from rows except primary key
         )
         
+        class_session = False
+        if session == None:
+            session = self.SessionLocal()
+            class_session = True
+
         try:
-            self.session.execute(upsert_statement)
-            self.session.commit()
+            session.execute(upsert_statement)
+            if class_session == True:
+                session.commit()
+            else: session.flush()
             print(f"Upserted {len(rows)} records into {table_name}.")
         except Exception as e:
-            self.session.rollback()
+            if class_session == True:
+                session.rollback()
             print(f"Error upserting data into {table_name}: {e}")
 
     def get_access_token_table(self):
