@@ -106,13 +106,11 @@ class WhoopDataIngestor():
                 
                 else: self.data_quality_validator.assertion_tests(df, self.model_classes[endpoint_value])
                 print(f"Data for {endpoint_key} passed all validation tests.")
-                
-            df.to_csv(f"data/{endpoint_key}_data.csv", index=False)
 
-            self.whoop_database.upsert_data(df, self.model_classes[endpoint_value], endpoint_key)
-        
-
-   
+            table, primary_key, table_cols = self.whoop_database.get_model_class_data(self.model_classes[endpoint_value])
+            rows = self.whoop_database.process_dataframe(df, table_cols)
+            self.whoop_database.upsert_data(table, primary_key, table_cols, rows, session=None)
+          
 
 
 if __name__ == '__main__':

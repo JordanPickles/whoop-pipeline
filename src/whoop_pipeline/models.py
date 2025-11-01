@@ -17,7 +17,7 @@ class Sleep(Base):
     __tablename__ = 'fact_activity_sleep'
     sleep_id: Mapped[str] = mapped_column(VARCHAR, primary_key=True)
     cycle_id: Mapped[int] = mapped_column(Integer, ForeignKey('fact_cycle.cycle_id', ondelete="CASCADE"))
-    v1_id: Mapped[int]
+    v1_id: Mapped[int] = mapped_column(Integer, nullable=True)
     user_id: Mapped[int]
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
@@ -68,7 +68,7 @@ class Recovery(Base):
 class Workout(Base):
     __tablename__ = 'fact_workout'
     workout_id: Mapped[str] = mapped_column(VARCHAR, primary_key=True)
-    v1_id: Mapped[int] = mapped_column(BigInteger)
+    v1_id: Mapped[int] = mapped_column(Integer, nullable=True)
     user_id: Mapped[int]
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
