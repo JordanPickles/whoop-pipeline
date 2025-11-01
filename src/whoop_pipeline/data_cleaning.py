@@ -65,13 +65,14 @@ class WhoopDataCleaner():
             if col in df.columns:
                 df[col] = df[col].astype(str)
         return df
+
     def coerce_boolean(self, df:pd.DataFrame, columns:list) -> pd.DataFrame:
         """Converts specified columns to boolean."""
         for col in columns:
             if col in df.columns:
                 df[col] = df[col].astype(bool)
         return df
-
+    
     def tz_offset_to_minutes(self, offset_str):
         if pd.isna(offset_str):
             return 0

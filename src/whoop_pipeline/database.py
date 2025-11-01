@@ -17,15 +17,14 @@ class WhoopDB():
     def __init__(self):
         self.db_url = settings.db_url
         self.engine = create_engine(self.db_url)
+        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+        self.session = self.SessionLocal()
+        self.connection = self.engine.connect()
 
     def create_tables(self):
         """Creates database tables based on the defined models if they don't already exist."""
         Base.metadata.create_all(bind=self.engine)
 
-    def get_session(self):
-        """Creates a new database session."""
-        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
-        return  SessionLocal
     
     def get_model_class_data(self, model_class):
         """Returns the table, primary key(s) and column names for a given SQLAlchemy model class."""
@@ -43,7 +42,7 @@ class WhoopDB():
 
         return rows
     
-    def upsert_data(self, df:pd.DataFrame, model_class, table_name:str):
+    def upsert_data_statement(self, df:pd.DataFrame, model_class, table_name:str):
 
         """Upserts data into the specified table. Checks for existing records based on primary key(s) and updates them if they exist, otherwise inserts new records."""
 
@@ -66,14 +65,12 @@ class WhoopDB():
             set_={c: statement.excluded[c] for c in updatable} # Updates all columns from rows except primary key
         )
         
-        session = self.get_session()
-        session = session()
         try:
-            session.execute(upsert_statement)
-            session.commit()
+            self.session.execute(upsert_statement)
+            self.session.commit()
             print(f"Upserted {len(rows)} records into {table_name}.")
         except Exception as e:
-            session.rollback()
+            self.session.rollback()
             print(f"Error upserting data into {table_name}: {e}")
 
     def get_access_token_table(self):
@@ -81,37 +78,42 @@ class WhoopDB():
         metadata = MetaData()
         return Table("access_tokens", metadata, autoload_with=self.engine)
 
-    def upsert_access_token(self, tokens:Dict, provider: str = "whoop"):
+    def upsert_access_token(self, tokens:Dict, provider: str = "whoop", session=None):
         """Upserts the access token into the access_tokens table.""" 
         
         tokens_updated = {"provider": provider, **tokens} # Adds the provider field and follows that with the tokens dict passed into the function
-        
         tokens_updated["expires_at"]  = int(time.time()) + int(tokens.get("expires_in", 0)) - 10
-        
-        print(tokens_updated.items())
         access_token_table = self.get_access_token_table()
-        print(access_token_table.columns)
         
-        statement = insert(access_token_table).values(tokens_updated)
+        updatable = [c for c in tokens_updated.keys() if c not in 'provider']
 
+        statement = insert(access_token_table).values(tokens_updated)
         upsert_statement = statement.on_conflict_do_update(
             index_elements= ['provider'], # Primary Key Column name
-            set_={c: statement.excluded[c] for c in tokens_updated.keys() if c != "provider"} # Updates all columns except primary key
+            set_={c: statement.excluded[c] for c in updatable} # Updates all columns except primary key
         )
+        class_session = False
+        if session == None:
+            session = self.SessionLocal()
+            class_session = True
 
-        session = self.get_session()
-        session = session()
         try:
             session.execute(upsert_statement)
-            session.commit()
-            print(f"Upserted access token for {provider}.")
+            if class_session == True:
+                session.commit()
+            else: session.flush()
+            print(f"Upserted 1 record into {'access_tokens'}.")
         except Exception as e:
-            session.rollback()
-            print(f"Error upserting access token for {provider}: {e}")
+            if class_session == True:
+                session.rollback()
+            print(f"Error upserting 1 record into {'access_tokens'}.")
 
-    def get_access_token(self, provider: str = "whoop") -> Dict:
+
+    def get_access_token(self, connection=None) -> Dict:
         """Fetches the access token from the access_tokens table."""
-        connection = self.engine.connect()
+        if connection == None:
+            connection = self.connection
+
         token_data = pd.read_sql(text("SELECT * FROM ACCESS_TOKENS"), con=connection)
         
         if not token_data.empty:
@@ -119,9 +121,10 @@ class WhoopDB():
         else:
             return {}
 
-    def get_max_date(self):
+    def get_max_date(self, connection=None):
         """Fetches the maximum created_at date from the fact_cycle table."""    
-        connection = self.engine.connect()
+        if connection == None:
+            connection = self.engine.connect()
         max_date = pd.read_sql(text("SELECT MAX(created_at) as max_date FROM fact_cycle"), con=connection)
         return max_date['max_date'][0]
     
