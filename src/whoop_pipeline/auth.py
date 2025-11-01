@@ -19,6 +19,7 @@ class WhoopClient():
         self.whoop_scope = settings.whoop_scope
         self.whoop_token_url = settings.whoop_token_url
         self.whoop_client_secret = settings.whoop_client_secret
+        self.whoop_db = WhoopDB()
 
     def build_url_auth(self) -> str:
         """Build the URL for the OAuth2 authorization request."""
@@ -131,7 +132,7 @@ class WhoopClient():
                 "client_id": self.whoop_client_id.strip(),
                 "client_secret": self.whoop_client_secret.strip(),
                 }
-        print(data.items())
+
         response = requests.post(str(self.whoop_token_url), headers=headers, data=data)
         
         if response.status_code >= 400:
@@ -157,19 +158,20 @@ class WhoopClient():
     def get_live_access_token(self):
         """Get a valid access token, refreshing it if necessary with OAuth."""      
 
-        tokens = WhoopDB().get_access_token(provider="whoop")
+        tokens = self.whoop_db.get_access_token(connection=None)
 
         if tokens == {}:
             tokens = self.authorisation()
-            WhoopDB().upsert_access_token(tokens, provider="whoop")
+            self.whoop_db.upsert_access_token(tokens, provider="whoop")
 
         elif int(time.time()) >= tokens.get('expires_at'):
             print("Access token expired or about to expire, refreshing...")
             tokens = self.refresh_access_token(tokens)
-            WhoopDB().upsert_access_token(tokens, provider="whoop")
+        
         else:
             print("Access token is still valid.")
         return tokens
 
 if __name__ == "__main__":
     whoop_client = WhoopClient()
+    whoop_client.get_live_access_token()
