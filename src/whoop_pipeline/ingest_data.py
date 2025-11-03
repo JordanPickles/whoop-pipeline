@@ -50,7 +50,6 @@ class WhoopDataIngestor():
         response_json_list.extend(data)
         next_access_token = json_data.get("next_token")
 
-
         if endpoint == 'cycle': 
             base_url = self.cycles_base_url 
         else: base_url = self.base_url
@@ -73,9 +72,7 @@ class WhoopDataIngestor():
             response_json = response.json()
             records = response_json.get("records")
             response_json_list.extend(records)
-
             next_access_token = response_json.get("next_token")
-        
         
         df =  pd.json_normalize(response_json_list)
         
@@ -103,14 +100,12 @@ class WhoopDataIngestor():
                     df_sample = df.sample(n=28, random_state=42) # ensures only 28 rows of data are validated to ensure the pipeline runs in a reasonable time
                     self.data_quality_validator.assertion_tests(df_sample, self.model_classes[endpoint_value])
                     
-                
                 else: self.data_quality_validator.assertion_tests(df, self.model_classes[endpoint_value])
                 print(f"Data for {endpoint_key} passed all validation tests.")
 
             table, primary_key, table_cols = self.whoop_database.get_model_class_data(self.model_classes[endpoint_value])
             rows = self.whoop_database.process_dataframe(df, table_cols)
             self.whoop_database.upsert_data(table, primary_key, table_cols, rows, session=None)
-          
 
 
 if __name__ == '__main__':
