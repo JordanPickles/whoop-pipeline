@@ -23,6 +23,17 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Tests
+        env:
+            TZ: Europe/London
+            WHOOP_CLIENT_ID:     ${{ secrets.WHOOP_CLIENT_ID }}
+            WHOOP_CLIENT_SECRET: ${{ secrets.WHOOP_CLIENT_SECRET }}
+            WHOOP_API_BASE_URL:  ${{ vars.WHOOP_API_BASE_URL }}
+            WHOOP_API_CYCLES_BASE_URL: ${{ vars.WHOOP_API_CYCLES_BASE_URL }}
+            DB_URL:              ${{ secrets.DB_URL }}
+            WHOOP_REDIRECT_URI:  ${{ vars.WHOOP_REDIRECT_URI }}
+            WHOOP_AUTH_URL:      ${{ vars.WHOOP_AUTH_URL }}
+            WHOOP_TOKEN_URL:     ${{ vars.WHOOP_TOKEN_URL }}
+            WHOOP_SCOPE:        ${{ vars.WHOOP_SCOPE }}
         run: |
           PYTHONPATH=src pytest -v
 
