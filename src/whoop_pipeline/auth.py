@@ -159,7 +159,6 @@ class WhoopClient():
         """Get a valid access token, refreshing it if necessary with OAuth."""      
 
         tokens = self.whoop_db.get_access_token(connection=None)
-
         if tokens == {}:
             tokens = self.authorisation()
             self.whoop_db.upsert_access_token(tokens, provider="whoop")
