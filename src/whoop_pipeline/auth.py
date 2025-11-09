@@ -13,7 +13,7 @@ import pandas as pd
 
 
 class WhoopClient():
-    def __init__(self):
+    def __init__(self, whoop_db=None):
         self.whoop_client_id = settings.whoop_client_id
         self.whoop_redirect_uri = settings.whoop_redirect_uri
         self.whoop_scope = settings.whoop_scope
