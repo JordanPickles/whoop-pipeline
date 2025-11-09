@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.pool import NullPool
 from whoop_pipeline.models import Base, Sleep, Recovery, Cycle, Workout
 from sqlalchemy.orm import sessionmaker
 from whoop_pipeline.config import settings 

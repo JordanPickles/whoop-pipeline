@@ -1,3 +1,4 @@
+
 import requests
 import json
 from whoop_pipeline.config import settings
@@ -11,12 +12,12 @@ import time
 from datetime import date, timedelta, datetime as dt
 
 class WhoopDataIngestor():
-    def __init__(self, access_token:str):
+    def __init__(self, access_token:str, whoop_database=None):
         self.access_token = access_token
         self.base_url = settings.whoop_api_base_url
         self.cycles_base_url = settings.whoop_api_cycles_base_url
         self.whoop_data_cleaner = WhoopDataCleaner()
-        self.whoop_database = WhoopDB()
+        self.whoop_database = whoop_database or WhoopDB()
         self.data_quality_validator = DataValidationTests()
         self.model_classes = {'cycle': WhoopModels.Cycle,
                 'activity/sleep': WhoopModels.Sleep, 
@@ -109,11 +110,11 @@ class WhoopDataIngestor():
 
 
 if __name__ == '__main__':
-    whoop_client = WhoopClient()
+    
     whoop_db = WhoopDB()
     print(settings.whoop_token_url[:0:4])
     tokens = whoop_client.get_live_access_token()
-    whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0))
+    whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0), whoop_database=whoop_db)
     whoop_db.create_tables()
     start_date = whoop_db.get_max_date() - pd.Timedelta('7 days') # Fetch data from 7 days before the latest date in the database
     
