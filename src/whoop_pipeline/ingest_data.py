@@ -1,3 +1,4 @@
+
 import requests
 import json
 from whoop_pipeline.config import settings
@@ -11,12 +12,12 @@ import time
 from datetime import date, timedelta, datetime as dt
 
 class WhoopDataIngestor():
-    def __init__(self, access_token:str):
+    def __init__(self, access_token:str, whoop_database=None):
         self.access_token = access_token
         self.base_url = settings.whoop_api_base_url
         self.cycles_base_url = settings.whoop_api_cycles_base_url
         self.whoop_data_cleaner = WhoopDataCleaner()
-        self.whoop_database = WhoopDB()
+        self.whoop_database = whoop_database or WhoopDB()
         self.data_quality_validator = DataValidationTests()
         self.model_classes = {'cycle': WhoopModels.Cycle,
                 'activity/sleep': WhoopModels.Sleep, 
@@ -50,7 +51,6 @@ class WhoopDataIngestor():
         response_json_list.extend(data)
         next_access_token = json_data.get("next_token")
 
-
         if endpoint == 'cycle': 
             base_url = self.cycles_base_url 
         else: base_url = self.base_url
@@ -73,12 +73,7 @@ class WhoopDataIngestor():
             response_json = response.json()
             records = response_json.get("records")
             response_json_list.extend(records)
-
             next_access_token = response_json.get("next_token")
-
-        if endpoint == 'activity/workout':
-            records = [r for r in records if r.get("score") is not None ] # drops records with no score. Occurs for things such as stretching activities etc
-        
         
         df =  pd.json_normalize(response_json_list)
         
@@ -106,23 +101,21 @@ class WhoopDataIngestor():
                     df_sample = df.sample(n=28, random_state=42) # ensures only 28 rows of data are validated to ensure the pipeline runs in a reasonable time
                     self.data_quality_validator.assertion_tests(df_sample, self.model_classes[endpoint_value])
                     
-                
                 else: self.data_quality_validator.assertion_tests(df, self.model_classes[endpoint_value])
                 print(f"Data for {endpoint_key} passed all validation tests.")
-                
-            df.to_csv(f"data/{endpoint_key}_data.csv", index=False)
 
-            self.whoop_database.upsert_data(df, self.model_classes[endpoint_value], endpoint_key)
-        
-
-   
+            table, primary_key, table_cols = self.whoop_database.get_model_class_data(self.model_classes[endpoint_value])
+            rows = self.whoop_database.process_dataframe(df, table_cols)
+            self.whoop_database.upsert_data(table, primary_key, table_cols, rows, session=None)
 
 
 if __name__ == '__main__':
-    whoop_client = WhoopClient()
+    
     whoop_db = WhoopDB()
+    whoop_client = WhoopClient(whoop_db=whoop_db)
+
     tokens = whoop_client.get_live_access_token()
-    whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0))
+    whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0), whoop_database=whoop_db)
     whoop_db.create_tables()
     start_date = whoop_db.get_max_date() - pd.Timedelta('7 days') # Fetch data from 7 days before the latest date in the database
     

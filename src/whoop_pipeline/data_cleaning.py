@@ -18,9 +18,7 @@ class WhoopDataCleaner():
         return "other"
     
     def columns_by_type(self, model_class) -> dict:
-        """
-        Returns a dict of column names grouped by simple types
-        using the SQLAlchemy model as source of truth.
+        """Returns a dict of column names grouped by simple types using the SQLAlchemy model as source of truth.
         """
         column_data_types = {"datetime": [], "integer": [], "float": [], "boolean": [], "string": [], "other": []}
         for col in model_class.__table__.columns:
@@ -39,7 +37,6 @@ class WhoopDataCleaner():
     
     def coerce_datetime(self, df:pd.DataFrame, columns:list) -> pd.DataFrame:
         """Converts specified columns to datetime."""
-
         for col in columns:
             if col in df.columns:
                 df[col] = pd.to_datetime(df[col], errors='coerce')
@@ -65,13 +62,14 @@ class WhoopDataCleaner():
             if col in df.columns:
                 df[col] = df[col].astype(str)
         return df
+
     def coerce_boolean(self, df:pd.DataFrame, columns:list) -> pd.DataFrame:
         """Converts specified columns to boolean."""
         for col in columns:
             if col in df.columns:
                 df[col] = df[col].astype(bool)
         return df
-
+    
     def tz_offset_to_minutes(self, offset_str):
         if pd.isna(offset_str):
             return 0
@@ -100,7 +98,6 @@ class WhoopDataCleaner():
         df = self.split_column_names(df, endpoint)
         df = self.rename_id_column(df, endpoint) 
         
-
         col_types = self.columns_by_type(model_class)
 
         df = self.coerce_datetime(df, col_types['datetime'])
