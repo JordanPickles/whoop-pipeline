@@ -8,7 +8,8 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY . .
 
-ENV SSL_CERT_FILE=/usr/local/lib/python3.11/site-packages/certifi/cacert.pem
+EXPOSE 8080
+
 ENV PYTHONPATH=/code/src
 
 ENTRYPOINT ["python", "-m", "whoop_pipeline.ingest_data"]
