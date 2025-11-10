@@ -11,13 +11,17 @@ class Settings(BaseSettings):
     whoop_client_id: str
     whoop_client_secret: str
     whoop_api_base_url: str
-    db_url: str
     whoop_refresh_token: Optional[str] = None
     whoop_redirect_uri: str
     whoop_auth_url: str
     whoop_token_url: str
     whoop_scope: str
     whoop_api_cycles_base_url: str
+    db_user:str
+    db_password:str
+    db_host:str
+    db_port:str
+    db_name:str
 
     class Config:
         env_file = ".env"
