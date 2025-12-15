@@ -10,6 +10,7 @@ import threading
 import json
 import os
 import pandas as pd
+import secrets
 
 
 class WhoopClient():
@@ -20,6 +21,7 @@ class WhoopClient():
         self.whoop_token_url = settings.whoop_token_url
         self.whoop_client_secret = settings.whoop_client_secret
         self.whoop_db = whoop_db or WhoopDB()
+        self.whoop_state = secrets.token_urlsafe(24)
 
     def build_url_auth(self) -> str:
         """Build the URL for the OAuth2 authorization request."""
@@ -29,20 +31,20 @@ class WhoopClient():
             "client_id": self.whoop_client_id,
             "redirect_uri": str(self.whoop_redirect_uri), #casts from the pydantic AnyHttpUrl to str
             "scope": self.whoop_scope,
-            "state": "random_state_string",
+            "state": self.whoop_state,  #Random string to prevent CSRF
         }
 
         url = F"{settings.whoop_auth_url}?{urllib.parse.urlencode(params)}"
 
         return url
     
-    def run_local_server_for_code(self, expected_state: str, timeout: int = 180) -> str:
+    def run_local_server_for_code(self, timeout: int = 180) -> str:
         """Run a local server to capture the authorization code from the redirect."""
 
         parsed = urlparse(str(self.whoop_redirect_uri))
         host = parsed.hostname
-        port = parsed.port
-        path = parsed.path
+        port = parsed.port or 8080
+        path = parsed.path or "/callback"
 
         result = {"code": None, "state": None, "error": None}
 
@@ -72,7 +74,7 @@ class WhoopClient():
                 return
         
 
-        httpd = HTTPServer((host, port), AuthHandler)
+        httpd = HTTPServer(("0.0.0.0", port), AuthHandler)
         try:
             t = threading.Thread(target=httpd.serve_forever, daemon=True)
             t.start()
@@ -85,7 +87,7 @@ class WhoopClient():
 
         if result["error"]:
             raise Exception(f"Error during authorization: {result['error']}")
-        if result["state"] != expected_state:
+        if result["state"] != self.whoop_state:
             raise Exception("State mismatch. Possible CSRF attack.")
         if not result["code"]:
             raise Exception("No authorization code received.")
@@ -148,9 +150,19 @@ class WhoopClient():
 
     def authorisation(self):
         """Perform the OAuth2 authorization flow to obtain tokens."""
+        
         auth_url = self.build_url_auth()
-        webbrowser.open(auth_url)
-        code = self.run_local_server_for_code(expected_state="random_state_string", timeout=180)
+        #webbrowser.open(auth_url)
+        print("\n" + "=" * 80)
+        print("WHOOP AUTHORIZATION REQUIRED")
+        print("=" * 80)
+        print(
+            "Open the following URL in your browser to authorize access.\n"
+            "After logging in, you will be redirected automatically.\n"
+        )
+        print(auth_url)
+        print("=" * 80 + "\n")
+        code = self.run_local_server_for_code(timeout=180)
         tokens = self.exchange_code_for_token(code)
         
         return tokens
