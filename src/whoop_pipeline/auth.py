@@ -124,7 +124,7 @@ class WhoopClient():
         """Refresh the access token using the refresh token."""
         
         refresh_token = tokens.get("refresh_token")
-        print(f"This is the refresh token {refresh_token.strip()}")
+
         if not refresh_token:
             raise ValueError("No refresh token available to refresh access token.")
         

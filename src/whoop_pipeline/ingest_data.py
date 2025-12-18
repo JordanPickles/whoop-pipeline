@@ -110,9 +110,8 @@ class WhoopDataIngestor():
 
 
 if __name__ == '__main__':
-    
+    whoop_client = WhoopClient()
     whoop_db = WhoopDB()
-    print(settings.whoop_token_url[:0:4])
     tokens = whoop_client.get_live_access_token()
     whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0), whoop_database=whoop_db)
     whoop_db.create_tables()

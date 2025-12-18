@@ -16,7 +16,8 @@ from datetime import date, timedelta, datetime as dt
 
 class WhoopDB():
     def __init__(self):
-        self.db_url = settings.db_url
+        self.db_url = f"postgresql+psycopg2://{settings.db_user}:{settings.db_password}@{settings.db_host}:{settings.db_port}/{settings.db_name}?sslmode=require"
+
         self.engine = create_engine(self.db_url)
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
         self.session = self.SessionLocal()
