@@ -124,6 +124,7 @@ class WhoopClient():
         """Refresh the access token using the refresh token."""
         
         refresh_token = tokens.get("refresh_token")
+        print(f"This is the refresh token {refresh_token.strip()}")
         if not refresh_token:
             raise ValueError("No refresh token available to refresh access token.")
         
@@ -151,7 +152,7 @@ class WhoopClient():
         """Perform the OAuth2 authorization flow to obtain tokens."""
         
         auth_url = self.build_url_auth()
-        #webbrowser.open(auth_url)
+        #webbrowser.open(auth_url) Webrbrowser not running in docker env so print the url instead for user to click from terminal and log in. The port in the image is mapped to the local host which is the redirect from whoop
         print("\n" + "=" * 80)
         print("WHOOP AUTHORIZATION REQUIRED")
         print("=" * 80)
