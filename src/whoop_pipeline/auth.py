@@ -21,6 +21,7 @@ class WhoopClient():
         self.whoop_token_url = settings.whoop_token_url
         self.whoop_client_secret = settings.whoop_client_secret
         self.whoop_db = WhoopDB()
+        self.whoop_state = secrets.token_urlsafe(16)  # Random string to prevent CSRF
 
     def build_url_auth(self) -> str:
         """Build the URL for the OAuth2 authorization request."""
