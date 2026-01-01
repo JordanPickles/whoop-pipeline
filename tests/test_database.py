@@ -14,7 +14,7 @@ from sqlalchemy import text
 
 class TestWhoopDB():
     def setup_method(self, method):
-        self.db_url = settings.db_url
+        self.db_url = f"postgresql+psycopg2://{settings.db_user}:{settings.db_password}@{settings.db_host}:{settings.db_port}/{settings.db_name}?sslmode=require"
         self.engine = create_engine(self.db_url)
         
         self.connection = self.engine.connect()

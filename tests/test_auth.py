@@ -1,10 +1,11 @@
+import secrets
 from whoop_pipeline.auth import WhoopClient
 from whoop_pipeline.config import settings
 import pandas as pd
 import numpy as np
 from urllib.parse import urlparse, parse_qs
 import requests
-
+import secrets
 
 
 
@@ -17,6 +18,7 @@ class TestWhoopAuth():
         self.whoop_scope = settings.whoop_scope
         self.whoop_token_url = settings.whoop_token_url
         self.whoop_client_secret = settings.whoop_client_secret
+        self.whoop_state = secrets.token_urlsafe(16)  # Random string to prevent CSRF
 
     def teardown_method(self, method):
         pass
@@ -31,7 +33,7 @@ class TestWhoopAuth():
         assert query_params["client_id"][0] == settings.whoop_client_id
         assert query_params["redirect_uri"][0] == str(settings.whoop_redirect_uri)
         assert query_params["scope"][0] == settings.whoop_scope
-        assert query_params["state"][0] == "random_state_string"
+        assert query_params["state"][0] == self.whoop_client.whoop_state
 
 
     def test_exchange_code_for_token(self, mocker):
