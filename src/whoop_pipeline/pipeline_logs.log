@@ -1,0 +1,24 @@
+2026-01-02 18:42:00,649 - __main__ - INFO - Starting Whoop Data Ingestion Pipeline
+2026-01-02 18:42:00,649 - __main__ - INFO - Step started: init clients
+2026-01-02 18:42:01,341 - __main__ - INFO - Step finished: init clients (0.69s)
+2026-01-02 18:42:01,341 - __main__ - INFO - Step started: get live access token
+2026-01-02 18:42:01,402 - whoop_pipeline.auth - INFO - Access token is still valid.
+2026-01-02 18:42:01,403 - __main__ - INFO - Step finished: get live access token (0.06s)
+2026-01-02 18:42:01,403 - __main__ - INFO - Step started: init ingestor
+2026-01-02 18:42:01,403 - __main__ - INFO - Step finished: init ingestor (0.00s)
+2026-01-02 18:42:01,403 - __main__ - INFO - Step started: create tables
+2026-01-02 18:42:01,674 - __main__ - INFO - Step finished: create tables (0.27s)
+2026-01-02 18:42:01,674 - __main__ - INFO - Step started: compute date window
+2026-01-02 18:42:01,715 - __main__ - INFO - Ingest window: 2025-12-25T08:39:39.000Z -> 2026-01-01T18:42:01.000Z
+2026-01-02 18:42:01,715 - __main__ - INFO - Step finished: compute date window (0.04s)
+2026-01-02 18:42:01,715 - __main__ - INFO - Step started: run data pipeline
+2026-01-02 18:42:02,622 - __main__ - INFO - Data for fact_cycle passed all validation tests.
+2026-01-02 18:42:02,706 - whoop_pipeline.database - INFO - Upserted 8 records into fact_cycle.
+2026-01-02 18:42:03,050 - __main__ - INFO - Data for fact_activity_sleep passed all validation tests.
+2026-01-02 18:42:03,125 - whoop_pipeline.database - INFO - Upserted 7 records into fact_activity_sleep.
+2026-01-02 18:42:03,455 - __main__ - INFO - Data for fact_recovery passed all validation tests.
+2026-01-02 18:42:03,524 - whoop_pipeline.database - INFO - Upserted 7 records into fact_recovery.
+2026-01-02 18:42:04,021 - __main__ - INFO - Data for fact_workout passed all validation tests.
+2026-01-02 18:42:04,094 - whoop_pipeline.database - INFO - Upserted 3 records into fact_workout.
+2026-01-02 18:42:04,095 - __main__ - INFO - Step finished: run data pipeline (2.38s)
+2026-01-02 18:42:04,095 - __main__ - INFO - Whoop Data Ingestion Pipeline completed successfully in 3.45s
