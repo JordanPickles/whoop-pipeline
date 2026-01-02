@@ -1,4 +1,5 @@
 
+import logging
 import requests
 import json
 from whoop_pipeline.config import settings
@@ -10,6 +11,26 @@ import whoop_pipeline.models as WhoopModels
 import pandas as pd
 import time
 from datetime import date, timedelta, datetime as dt
+from whoop_pipeline.logging_config import setup_logging
+from contextlib import contextmanager
+import logging
+
+
+setup_logging()
+
+logger = logging.getLogger(__name__)
+
+@contextmanager
+def step_timer(name: str):
+    t0 = time.perf_counter()
+    logger.info("Step started: %s", name)
+    try:
+        yield
+        logger.info("Step finished: %s (%.2fs)", name, time.perf_counter() - t0)
+    except Exception:
+        logger.exception("Step failed: %s (%.2fs)", name, time.perf_counter() - t0)
+        raise
+
 
 class WhoopDataIngestor():
     def __init__(self, access_token:str, whoop_database=None):
@@ -102,7 +123,7 @@ class WhoopDataIngestor():
                     self.data_quality_validator.assertion_tests(df_sample, self.model_classes[endpoint_value])
                     
                 else: self.data_quality_validator.assertion_tests(df, self.model_classes[endpoint_value])
-                print(f"Data for {endpoint_key} passed all validation tests.")
+                logger.info(f"Data for {endpoint_key} passed all validation tests.")
 
             table, primary_key, table_cols = self.whoop_database.get_model_class_data(self.model_classes[endpoint_value])
             rows = self.whoop_database.process_dataframe(df, table_cols)
@@ -110,21 +131,53 @@ class WhoopDataIngestor():
 
 
 if __name__ == '__main__':
-    whoop_client = WhoopClient()
-    whoop_db = WhoopDB()
-    tokens = whoop_client.get_live_access_token()
-    whoop_ingestor = WhoopDataIngestor(tokens.get('access_token', 0), whoop_database=whoop_db)
-    whoop_db.create_tables()
-    start_date = whoop_db.get_max_date() - pd.Timedelta('7 days') # Fetch data from 7 days before the latest date in the database
-    
-    if pd.isna(start_date):
-        start_date = pd.to_datetime('2024-01-01')
-    
-    start_date = start_date.tz_localize('UTC').strftime('%Y-%m-%dT%H:%M:%S.000Z')
 
-    
-    end_date = (pd.to_datetime('now') - pd.Timedelta('1 days')).tz_localize('UTC').strftime('%Y-%m-%dT%H:%M:%S.000Z')
-    print(f"Fetching data from {start_date} to {end_date}")
+    t0_total = time.perf_counter()
+    logger.info("Starting Whoop Data Ingestion Pipeline")
 
-    whoop_ingestor.data_pipeline(start_date, end_date)
-   
+    try:
+        with step_timer("init clients"):
+            whoop_client = WhoopClient()
+            whoop_db = WhoopDB()
+
+        with step_timer("get live access token"):
+            tokens = whoop_client.get_live_access_token()
+
+        with step_timer("init ingestor"):
+            whoop_ingestor = WhoopDataIngestor(
+                tokens.get("access_token", ""),
+                whoop_database=whoop_db
+            )
+
+        with step_timer("create tables"):
+            whoop_db.create_tables()
+
+        with step_timer("compute date window"):
+            max_date = whoop_db.get_max_date()
+            if pd.isna(max_date):
+                start_date = pd.to_datetime("2024-01-01", utc=True)
+            else:
+                # max_date might be tz-naive; force UTC safely
+                start_date = pd.to_datetime(max_date, utc=True) - pd.Timedelta(days=7)
+
+            end_date = pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)
+
+            start_date = start_date.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            end_date = end_date.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
+            logger.info("Ingest window: %s -> %s", start_date, end_date)
+
+        with step_timer("run data pipeline"):
+            whoop_ingestor.data_pipeline(start_date, end_date)
+
+        logger.info(
+            "Whoop Data Ingestion Pipeline completed successfully in %.2fs",
+            time.perf_counter() - t0_total
+        )
+
+    except Exception:
+        logger.exception(
+            "Whoop Data Ingestion Pipeline failed after %.2fs",
+            time.perf_counter() - t0_total
+        )
+        raise

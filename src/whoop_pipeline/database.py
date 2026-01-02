@@ -13,6 +13,9 @@ import psycopg2
 from sqlalchemy import text
 import time
 from datetime import date, timedelta, datetime as dt
+import logging
+
+logger = logging.getLogger(__name__)
 
 class WhoopDB():
     def __init__(self):
@@ -71,11 +74,11 @@ class WhoopDB():
             if class_session == True:
                 session.commit()
             else: session.flush()
-            print(f"Upserted {len(rows)} records into {table_name}.")
+            logger.info(f"Upserted {len(rows)} records into {table_name}.")
         except Exception as e:
             if class_session == True:
                 session.rollback()
-            print(f"Error upserting data into {table_name}: {e}")
+            logger.error(f"Error upserting data into {table_name}: {e}")
 
     def get_access_token_table(self):
         """Creates the access_tokens table if it doesn't exist."""
@@ -106,11 +109,11 @@ class WhoopDB():
             if class_session == True:
                 session.commit()
             else: session.flush()
-            print(f"Upserted 1 record into {'access_tokens'}.")
+            logger.info(f"Upserted 1 record into {'access_tokens'}.")
         except Exception as e:
             if class_session == True:
                 session.rollback()
-            print(f"Error upserting 1 record into {'access_tokens'}.")
+            logger.error(f"Error upserting 1 record into {'access_tokens'}.")
 
 
     def get_access_token(self, connection=None) -> Dict:

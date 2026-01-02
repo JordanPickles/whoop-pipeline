@@ -11,7 +11,9 @@ import json
 import os
 import pandas as pd
 import secrets
+import logging
 
+logger = logging.getLogger(__name__)
 
 class WhoopClient():
     def __init__(self, whoop_db=None):
@@ -153,7 +155,8 @@ class WhoopClient():
         """Perform the OAuth2 authorization flow to obtain tokens."""
         
         auth_url = self.build_url_auth()
-        #webbrowser.open(auth_url) Webrbrowser not running in docker env so print the url instead for user to click from terminal and log in. The port in the image is mapped to the local host which is the redirect from whoop
+        #webbrowser.open(auth_url) 
+        # Webrbrowser not running in docker env so print the url instead for user to click from terminal and log in. The port in the image is mapped to the local host which is the redirect from whoop
         print("\n" + "=" * 80)
         print("WHOOP AUTHORIZATION REQUIRED")
         print("=" * 80)
@@ -173,15 +176,16 @@ class WhoopClient():
 
         tokens = self.whoop_db.get_access_token(connection=None)
         if tokens == {}:
+            logger.info("No access token found, initiating authorization flow...")
             tokens = self.authorisation()
             self.whoop_db.upsert_access_token(tokens, provider="whoop")
 
         elif int(time.time()) >= tokens.get('expires_at'):
-            print("Access token expired or about to expire, refreshing...")
+            logger.info("Access token expired or about to expire, refreshing...")
             tokens = self.refresh_access_token(tokens)
         
         else:
-            print("Access token is still valid.")
+            logger.info("Access token is still valid.")
         return tokens
 
 if __name__ == "__main__":
