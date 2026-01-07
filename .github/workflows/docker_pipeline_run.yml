@@ -19,21 +19,22 @@ jobs:
               run: docker pull jpickles/whoop-pipeline:latest
 
             - name: Run Whoop Pipeline Container
-              run: docker run --rm \
+              run: |
+                    docker run --rm \
                     -e  TZ="Europe/London" \
-                    -e WHOOP_CLIENT_ID = "${{ secrets.WHOOP_CLIENT_ID }}" \
-                    -e WHOOP_CLIENT_SECRET = "${{ secrets.WHOOP_CLIENT_SECRET }}" \
-                    -e WHOOP_API_BASE_URL =  "${{ vars.WHOOP_API_BASE_URL }}" \
-                    -e WHOOP_API_CYCLES_BASE_URL = "${{ vars.WHOOP_API_CYCLES_BASE_URL }}" \
-                    -e WHOOP_REDIRECT_URI =  "${{ vars.WHOOP_REDIRECT_URI }}" \
-                    -e WHOOP_AUTH_URL =      "${{ vars.WHOOP_AUTH_URL }}" \
-                    -e WHOOP_TOKEN_URL =     "${{ vars.WHOOP_TOKEN_URL }}" \
-                    -e WHOOP_SCOPE =        "${{ vars.WHOOP_SCOPE }}" \
-                    -e DB_HOST =            "${{ secrets.DB_HOST }}" \
-                    -e DB_PORT =            "${{ secrets.DB_PORT }}" \
-                    -e DB_NAME =            "${{ secrets.DB_NAME }}" \
-                    -e DB_USER =            "${{ secrets.DB_USER }}" \
-                    -e DB_PASSWORD =        "${{ secrets.DB_PASSWORD }}" \
+                    -e WHOOP_CLIENT_ID="${{secrets.WHOOP_CLIENT_ID}}" \
+                    -e WHOOP_CLIENT_SECRET="${{secrets.WHOOP_CLIENT_SECRET}}" \
+                    -e WHOOP_API_BASE_URL="${{vars.WHOOP_API_BASE_URL}}" \
+                    -e WHOOP_API_CYCLES_BASE_URL="${{vars.WHOOP_API_CYCLES_BASE_URL}}" \
+                    -e WHOOP_REDIRECT_URI="${{vars.WHOOP_REDIRECT_URI}}" \
+                    -e WHOOP_AUTH_URL="${{vars.WHOOP_AUTH_URL}}" \
+                    -e WHOOP_TOKEN_URL="${{vars.WHOOP_TOKEN_URL}}" \
+                    -e WHOOP_SCOPE="${{vars.WHOOP_SCOPE}}" \
+                    -e DB_HOST="${{secrets.DB_HOST}}" \
+                    -e DB_PORT="${{secrets.DB_PORT}}" \
+                    -e DB_NAME="${{secrets.DB_NAME}}" \
+                    -e DB_USER="${{secrets.DB_USER}}" \
+                    -e DB_PASSWORD="${{secrets.DB_PASSWORD}}" \
                     jpickles/whoop-pipeline:latest
 
 
