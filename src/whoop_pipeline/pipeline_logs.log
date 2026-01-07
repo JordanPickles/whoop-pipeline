@@ -22,3 +22,52 @@
 2026-01-02 18:42:04,094 - whoop_pipeline.database - INFO - Upserted 3 records into fact_workout.
 2026-01-02 18:42:04,095 - __main__ - INFO - Step finished: run data pipeline (2.38s)
 2026-01-02 18:42:04,095 - __main__ - INFO - Whoop Data Ingestion Pipeline completed successfully in 3.45s
+2026-01-07 18:08:43,455 - __main__ - INFO - Starting Whoop Data Ingestion Pipeline
+2026-01-07 18:08:43,457 - __main__ - INFO - Step started: init clients
+2026-01-07 18:08:44,136 - __main__ - INFO - Step finished: init clients (0.68s)
+2026-01-07 18:08:44,136 - __main__ - INFO - Step started: get live access token
+2026-01-07 18:08:44,235 - whoop_pipeline.auth - INFO - No access token found, initiating authorization flow...
+2026-01-07 18:09:15,371 - whoop_pipeline.database - INFO - Upserted 1 record into access_tokens.
+2026-01-07 18:09:15,372 - __main__ - INFO - Step finished: get live access token (31.24s)
+2026-01-07 18:09:15,372 - __main__ - INFO - Step started: init ingestor
+2026-01-07 18:09:15,372 - __main__ - INFO - Step finished: init ingestor (0.00s)
+2026-01-07 18:09:15,373 - __main__ - INFO - Step started: create tables
+2026-01-07 18:09:15,601 - __main__ - INFO - Step finished: create tables (0.23s)
+2026-01-07 18:09:15,601 - __main__ - INFO - Step started: compute date window
+2026-01-07 18:09:15,672 - __main__ - INFO - Ingest window: 2025-12-26T06:29:13.000Z -> 2026-01-06T18:09:15.000Z
+2026-01-07 18:09:15,672 - __main__ - INFO - Step finished: compute date window (0.07s)
+2026-01-07 18:09:15,673 - __main__ - INFO - Step started: run data pipeline
+2026-01-07 18:09:16,012 - __main__ - INFO - Data for fact_cycle passed all validation tests.
+2026-01-07 18:09:16,092 - whoop_pipeline.database - INFO - Upserted 12 records into fact_cycle.
+2026-01-07 18:09:16,521 - __main__ - INFO - Data for fact_activity_sleep passed all validation tests.
+2026-01-07 18:09:16,692 - whoop_pipeline.database - INFO - Upserted 12 records into fact_activity_sleep.
+2026-01-07 18:09:17,124 - __main__ - INFO - Data for fact_recovery passed all validation tests.
+2026-01-07 18:09:17,195 - whoop_pipeline.database - INFO - Upserted 12 records into fact_recovery.
+2026-01-07 18:09:17,660 - __main__ - INFO - Data for fact_workout passed all validation tests.
+2026-01-07 18:09:17,744 - whoop_pipeline.database - INFO - Upserted 4 records into fact_workout.
+2026-01-07 18:09:17,744 - __main__ - INFO - Step finished: run data pipeline (2.07s)
+2026-01-07 18:09:17,744 - __main__ - INFO - Whoop Data Ingestion Pipeline completed successfully in 34.29s
+2026-01-07 18:09:39,145 - __main__ - INFO - Starting Whoop Data Ingestion Pipeline
+2026-01-07 18:09:39,145 - __main__ - INFO - Step started: init clients
+2026-01-07 18:09:39,799 - __main__ - INFO - Step finished: init clients (0.65s)
+2026-01-07 18:09:39,799 - __main__ - INFO - Step started: get live access token
+2026-01-07 18:09:39,860 - whoop_pipeline.auth - INFO - Access token is still valid.
+2026-01-07 18:09:39,860 - __main__ - INFO - Step finished: get live access token (0.06s)
+2026-01-07 18:09:39,861 - __main__ - INFO - Step started: init ingestor
+2026-01-07 18:09:39,861 - __main__ - INFO - Step finished: init ingestor (0.00s)
+2026-01-07 18:09:39,861 - __main__ - INFO - Step started: create tables
+2026-01-07 18:09:40,088 - __main__ - INFO - Step finished: create tables (0.23s)
+2026-01-07 18:09:40,088 - __main__ - INFO - Step started: compute date window
+2026-01-07 18:09:40,125 - __main__ - INFO - Ingest window: 2025-12-30T02:54:56.000Z -> 2026-01-06T18:09:40.000Z
+2026-01-07 18:09:40,125 - __main__ - INFO - Step finished: compute date window (0.04s)
+2026-01-07 18:09:40,125 - __main__ - INFO - Step started: run data pipeline
+2026-01-07 18:09:40,425 - __main__ - INFO - Data for fact_cycle passed all validation tests.
+2026-01-07 18:09:40,489 - whoop_pipeline.database - INFO - Upserted 8 records into fact_cycle.
+2026-01-07 18:09:40,892 - __main__ - INFO - Data for fact_activity_sleep passed all validation tests.
+2026-01-07 18:09:40,963 - whoop_pipeline.database - INFO - Upserted 8 records into fact_activity_sleep.
+2026-01-07 18:09:41,293 - __main__ - INFO - Data for fact_recovery passed all validation tests.
+2026-01-07 18:09:41,360 - whoop_pipeline.database - INFO - Upserted 8 records into fact_recovery.
+2026-01-07 18:09:41,765 - __main__ - INFO - Data for fact_workout passed all validation tests.
+2026-01-07 18:09:41,834 - whoop_pipeline.database - INFO - Upserted 3 records into fact_workout.
+2026-01-07 18:09:41,834 - __main__ - INFO - Step finished: run data pipeline (1.71s)
+2026-01-07 18:09:41,834 - __main__ - INFO - Whoop Data Ingestion Pipeline completed successfully in 2.69s
