@@ -86,7 +86,7 @@ Key points:
 - The code is then used in exchange for an access token and a refresh token 
 - The refresh token is stored securely (database)
 - Access tokens are refreshed automatically when expired
-- Docker and CI environments run non-interactive token refresh flows by printing a URL in the terminal which can be clicked to load the sign-in page
+- Docker and CI environments run non-interactive token refresh flows by printing a URL in the terminal which can be oepned to complete sign-in
 
 ---
 
@@ -98,7 +98,7 @@ To run the pipeline via the docker image, the following steps would need to be c
 - Tick the scope boxes
 - Add a redirect, the below will work for this.
 ```http://localhost:8080/callback```
-- Set up a PostrgreSQL database which can be accessed by the project
+- Set up a PostgreSQL database which can be accessed by the project
 - Ensure you have the docker daemon running
 - Run the below code inserting the required environment variables
 
