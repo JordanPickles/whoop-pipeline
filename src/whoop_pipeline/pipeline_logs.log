@@ -71,3 +71,111 @@
 2026-01-07 18:09:41,834 - whoop_pipeline.database - INFO - Upserted 3 records into fact_workout.
 2026-01-07 18:09:41,834 - __main__ - INFO - Step finished: run data pipeline (1.71s)
 2026-01-07 18:09:41,834 - __main__ - INFO - Whoop Data Ingestion Pipeline completed successfully in 2.69s
+2026-01-08 18:41:34,877 - __main__ - INFO - Starting Whoop Data Ingestion Pipeline
+2026-01-08 18:41:34,878 - __main__ - INFO - Step started: init clients
+2026-01-08 18:41:35,695 - __main__ - INFO - Step finished: init clients (0.82s)
+2026-01-08 18:41:35,695 - __main__ - INFO - Step started: get live access token
+2026-01-08 18:41:35,787 - whoop_pipeline.auth - INFO - No access token found, initiating authorization flow...
+2026-01-08 18:42:11,562 - whoop_pipeline.database - INFO - Upserted 1 record into access_tokens.
+2026-01-08 18:42:11,563 - __main__ - INFO - Step finished: get live access token (35.87s)
+2026-01-08 18:42:11,563 - __main__ - INFO - Step started: init ingestor
+2026-01-08 18:42:11,564 - __main__ - INFO - Step finished: init ingestor (0.00s)
+2026-01-08 18:42:11,564 - __main__ - INFO - Step started: create tables
+2026-01-08 18:42:11,829 - __main__ - INFO - Step finished: create tables (0.27s)
+2026-01-08 18:42:11,830 - __main__ - INFO - Step started: compute date window
+2026-01-08 18:42:11,891 - __main__ - INFO - Ingest window: 2025-12-30T02:54:56.000Z -> 2026-01-07T18:42:11.000Z
+2026-01-08 18:42:11,891 - __main__ - INFO - Step finished: compute date window (0.06s)
+2026-01-08 18:42:11,891 - __main__ - INFO - Step started: run data pipeline
+2026-01-08 18:42:12,285 - __main__ - INFO - Data for fact_cycle passed all validation tests.
+2026-01-08 18:42:12,373 - whoop_pipeline.database - INFO - Upserted 9 records into fact_cycle.
+2026-01-08 18:42:12,779 - __main__ - INFO - Data for fact_activity_sleep passed all validation tests.
+2026-01-08 18:42:12,871 - whoop_pipeline.database - INFO - Upserted 9 records into fact_activity_sleep.
+2026-01-08 18:42:13,267 - __main__ - INFO - Data for fact_recovery passed all validation tests.
+2026-01-08 18:42:13,339 - whoop_pipeline.database - INFO - Upserted 9 records into fact_recovery.
+2026-01-08 18:42:13,755 - __main__ - INFO - Data for fact_workout passed all validation tests.
+2026-01-08 18:42:13,823 - whoop_pipeline.database - INFO - Upserted 3 records into fact_workout.
+2026-01-08 18:42:13,824 - __main__ - INFO - Step finished: run data pipeline (1.93s)
+2026-01-08 18:42:13,824 - __main__ - INFO - Whoop Data Ingestion Pipeline completed successfully in 38.95s
+2026-01-11 13:24:26,902 - __main__ - INFO - Starting Whoop Data Ingestion Pipeline
+2026-01-11 13:24:26,906 - __main__ - INFO - Step started: init clients
+2026-01-11 13:24:27,813 - __main__ - INFO - Step finished: init clients (0.91s)
+2026-01-11 13:24:27,816 - __main__ - INFO - Step started: get live access token
+2026-01-11 13:24:27,901 - whoop_pipeline.auth - INFO - No access token found, initiating authorization flow...
+2026-01-11 13:25:06,520 - whoop_pipeline.database - INFO - Upserted 1 record into access_tokens.
+2026-01-11 13:25:06,522 - __main__ - INFO - Step finished: get live access token (38.71s)
+2026-01-11 13:25:06,522 - __main__ - INFO - Step started: init ingestor
+2026-01-11 13:25:06,523 - __main__ - INFO - Step finished: init ingestor (0.00s)
+2026-01-11 13:25:06,523 - __main__ - INFO - Step started: create tables
+2026-01-11 13:25:06,717 - __main__ - INFO - Step finished: create tables (0.19s)
+2026-01-11 13:25:06,717 - __main__ - INFO - Step started: compute date window
+2026-01-11 13:25:06,780 - __main__ - INFO - Ingest window: 2026-01-01T05:48:25.000Z -> 2026-01-10T13:25:06.000Z
+2026-01-11 13:25:06,780 - __main__ - INFO - Step finished: compute date window (0.06s)
+2026-01-11 13:25:06,780 - __main__ - INFO - Step started: run data pipeline
+2026-01-11 13:25:07,246 - __main__ - INFO - Data for fact_cycle passed all validation tests.
+2026-01-11 13:25:07,351 - whoop_pipeline.database - INFO - Upserted 10 records into fact_cycle.
+2026-01-11 13:25:07,735 - __main__ - INFO - Data for fact_activity_sleep passed all validation tests.
+2026-01-11 13:25:07,813 - whoop_pipeline.database - INFO - Upserted 10 records into fact_activity_sleep.
+2026-01-11 13:25:08,160 - __main__ - INFO - Data for fact_recovery passed all validation tests.
+2026-01-11 13:25:08,224 - whoop_pipeline.database - INFO - Upserted 10 records into fact_recovery.
+2026-01-11 13:25:08,571 - __main__ - INFO - Data for fact_workout passed all validation tests.
+2026-01-11 13:25:08,648 - whoop_pipeline.database - INFO - Upserted 2 records into fact_workout.
+2026-01-11 13:25:08,661 - __main__ - INFO - Step finished: run data pipeline (1.88s)
+2026-01-11 13:25:08,661 - __main__ - INFO - Whoop Data Ingestion Pipeline completed successfully in 41.76s
+2026-01-19 06:10:56,069 - __main__ - INFO - Starting Whoop Data Ingestion Pipeline
+2026-01-19 06:10:56,077 - __main__ - INFO - Step started: init clients
+2026-01-19 06:10:57,386 - __main__ - INFO - Step finished: init clients (1.31s)
+2026-01-19 06:10:57,387 - __main__ - INFO - Step started: get live access token
+2026-01-19 06:10:57,698 - whoop_pipeline.auth - INFO - Access token expired or about to expire, refreshing...
+2026-01-19 06:10:58,159 - __main__ - ERROR - Step failed: get live access token (0.77s)
+Traceback (most recent call last):
+  File "/Users/jordanpickles/Library/CloudStorage/OneDrive-Personal/Personal Data Projects/whoop-pipeline/src/whoop_pipeline/ingest_data.py", line 28, in step_timer
+    yield
+  File "/Users/jordanpickles/Library/CloudStorage/OneDrive-Personal/Personal Data Projects/whoop-pipeline/src/whoop_pipeline/ingest_data.py", line 144, in <module>
+    tokens = whoop_client.get_live_access_token()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jordanpickles/Library/CloudStorage/OneDrive-Personal/Personal Data Projects/whoop-pipeline/src/whoop_pipeline/auth.py", line 185, in get_live_access_token
+    tokens = self.refresh_access_token(tokens)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jordanpickles/Library/CloudStorage/OneDrive-Personal/Personal Data Projects/whoop-pipeline/src/whoop_pipeline/auth.py", line 148, in refresh_access_token
+    response.raise_for_status()
+  File "/Users/jordanpickles/opt/miniconda3/envs/whoop-pipeline/lib/python3.11/site-packages/requests/models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.prod.whoop.com/oauth/oauth2/token
+2026-01-19 06:10:58,167 - __main__ - ERROR - Whoop Data Ingestion Pipeline failed after 2.10s
+Traceback (most recent call last):
+  File "/Users/jordanpickles/Library/CloudStorage/OneDrive-Personal/Personal Data Projects/whoop-pipeline/src/whoop_pipeline/ingest_data.py", line 144, in <module>
+    tokens = whoop_client.get_live_access_token()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jordanpickles/Library/CloudStorage/OneDrive-Personal/Personal Data Projects/whoop-pipeline/src/whoop_pipeline/auth.py", line 185, in get_live_access_token
+    tokens = self.refresh_access_token(tokens)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jordanpickles/Library/CloudStorage/OneDrive-Personal/Personal Data Projects/whoop-pipeline/src/whoop_pipeline/auth.py", line 148, in refresh_access_token
+    response.raise_for_status()
+  File "/Users/jordanpickles/opt/miniconda3/envs/whoop-pipeline/lib/python3.11/site-packages/requests/models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.prod.whoop.com/oauth/oauth2/token
+2026-01-19 06:11:58,262 - __main__ - INFO - Starting Whoop Data Ingestion Pipeline
+2026-01-19 06:11:58,263 - __main__ - INFO - Step started: init clients
+2026-01-19 06:11:59,085 - __main__ - INFO - Step finished: init clients (0.82s)
+2026-01-19 06:11:59,085 - __main__ - INFO - Step started: get live access token
+2026-01-19 06:11:59,138 - whoop_pipeline.auth - INFO - No access token found, initiating authorization flow...
+2026-01-19 06:12:33,136 - whoop_pipeline.database - INFO - Upserted 1 record into access_tokens.
+2026-01-19 06:12:33,136 - __main__ - INFO - Step finished: get live access token (34.05s)
+2026-01-19 06:12:33,137 - __main__ - INFO - Step started: init ingestor
+2026-01-19 06:12:33,137 - __main__ - INFO - Step finished: init ingestor (0.00s)
+2026-01-19 06:12:33,137 - __main__ - INFO - Step started: create tables
+2026-01-19 06:12:33,356 - __main__ - INFO - Step finished: create tables (0.22s)
+2026-01-19 06:12:33,356 - __main__ - INFO - Step started: compute date window
+2026-01-19 06:12:33,410 - __main__ - INFO - Ingest window: 2026-01-03T09:51:29.000Z -> 2026-01-18T06:12:33.000Z
+2026-01-19 06:12:33,410 - __main__ - INFO - Step finished: compute date window (0.05s)
+2026-01-19 06:12:33,411 - __main__ - INFO - Step started: run data pipeline
+2026-01-19 06:12:33,731 - __main__ - INFO - Data for fact_cycle passed all validation tests.
+2026-01-19 06:12:33,804 - whoop_pipeline.database - INFO - Upserted 16 records into fact_cycle.
+2026-01-19 06:12:34,292 - __main__ - INFO - Data for fact_activity_sleep passed all validation tests.
+2026-01-19 06:12:34,376 - whoop_pipeline.database - INFO - Upserted 15 records into fact_activity_sleep.
+2026-01-19 06:12:34,792 - __main__ - INFO - Data for fact_recovery passed all validation tests.
+2026-01-19 06:12:34,865 - whoop_pipeline.database - INFO - Upserted 15 records into fact_recovery.
+2026-01-19 06:12:35,204 - __main__ - INFO - Data for fact_workout passed all validation tests.
+2026-01-19 06:12:35,265 - whoop_pipeline.database - INFO - Upserted 4 records into fact_workout.
+2026-01-19 06:12:35,266 - __main__ - INFO - Step finished: run data pipeline (1.86s)
+2026-01-19 06:12:35,266 - __main__ - INFO - Whoop Data Ingestion Pipeline completed successfully in 37.00s

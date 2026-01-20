@@ -89,7 +89,7 @@ class WhoopDB():
         """Upserts the access token into the access_tokens table.""" 
         
         tokens_updated = {"provider": provider, **tokens} # Adds the provider field and follows that with the tokens dict passed into the function
-        tokens_updated["expires_at"]  = int(time.time()) + int(tokens.get("expires_in", 0)) - 10
+        tokens_updated["expires_at"]  = int(time.time()) + int(tokens.get("expires_in", 0))
         access_token_table = self.get_access_token_table()
         
         updatable = [c for c in tokens_updated.keys() if c not in 'provider']

@@ -136,6 +136,7 @@ class WhoopClient():
                 "refresh_token": refresh_token.strip(),
                 "client_id": self.whoop_client_id.strip(),
                 "client_secret": self.whoop_client_secret.strip(),
+                "scope": "offline"
                 }
 
         response = requests.post(str(self.whoop_token_url), headers=headers, data=data)
@@ -143,7 +144,7 @@ class WhoopClient():
         if response.status_code >= 400:
             print("STATUS:", response.status_code)
             print("URL:", str(settings.whoop_token_url))
-            print("POSTED DATA:", {**data, "client_secret": "***masked***"})
+            print("POSTED DATA:", {**data, "refresh_token": "***masked***", "client_secret": "***masked***"})
             print("BODY:", response.text)   # <-- this tells us exactly what's wrong
             response.raise_for_status()
             return None
@@ -180,7 +181,7 @@ class WhoopClient():
             tokens = self.authorisation()
             self.whoop_db.upsert_access_token(tokens, provider="whoop")
 
-        elif int(time.time()) >= tokens.get('expires_at'):
+        elif int(time.time()) + 300 >= tokens.get('expires_at'):
             logger.info("Access token expired or about to expire, refreshing...")
             tokens = self.refresh_access_token(tokens)
         
