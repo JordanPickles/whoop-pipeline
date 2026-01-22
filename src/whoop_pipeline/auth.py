@@ -184,6 +184,8 @@ class WhoopClient():
         elif int(time.time()) + 300 >= tokens.get('expires_at'):
             logger.info("Access token expired or about to expire, refreshing...")
             tokens = self.refresh_access_token(tokens)
+            self.whoop_db.upsert_access_token(tokens, provider="whoop")
+
         
         else:
             logger.info("Access token is still valid.")
