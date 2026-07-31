@@ -157,10 +157,10 @@ if __name__ == '__main__':
             if pd.isna(max_date):
                 start_date = pd.to_datetime("2024-01-01", utc=True)
             else:
-                # max_date might be tz-naive; force UTC safely
+                # max_date converted to UTC
                 start_date = pd.to_datetime(max_date, utc=True) - pd.Timedelta(days=7)
 
-            end_date = pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)
+            end_date = pd.Timestamp.now(tz="Europe/London")
 
             start_date = start_date.strftime("%Y-%m-%dT%H:%M:%S.000Z")
             end_date = end_date.strftime("%Y-%m-%dT%H:%M:%S.000Z")
