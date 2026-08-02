@@ -41,6 +41,8 @@ class WhoopDB():
         """Processes the DataFrame to match the database table schema."""
 
         df = df[table_cols] # Keep only columns that exist in the table
+        for col in df.select_dtypes(include=['datetime', 'datetimetz']).columns:
+            df[col] = df[col].astype(object)
         df = df.where(df.notna(), None) # Replace pandas NaN with None for SQL compatibility
         rows = df.to_dict(orient='records') # Convert DataFrame to list of dictionaries for upserting to database
 

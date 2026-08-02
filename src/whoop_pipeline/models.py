@@ -10,7 +10,7 @@ class Base(DeclarativeBase):
         str: VARCHAR,
         float: FLOAT,
         Date: DATE,
-        DateTime: TIMESTAMP
+        DateTime: TIMESTAMP(timezone=True)
     }
 
 class Sleep(Base):
@@ -22,7 +22,7 @@ class Sleep(Base):
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
     start: Mapped[DateTime]
-    end: Mapped[DateTime]
+    end: Mapped[DateTime] 
     timezone_offset: Mapped[int]
     nap: Mapped[bool]
     score_state: Mapped[str| None] = mapped_column(String, nullable=True)
@@ -73,7 +73,7 @@ class Workout(Base):
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
     start: Mapped[DateTime]
-    end: Mapped[DateTime]
+    end: Mapped[DateTime] 
     timezone_offset: Mapped[int]
     sport_name: Mapped[str]
     score_state: Mapped[str| None] = mapped_column(String, nullable=True)
@@ -101,7 +101,7 @@ class Cycle(Base):
     created_at: Mapped[DateTime]
     updated_at: Mapped[DateTime]
     start: Mapped[DateTime]
-    end: Mapped[DateTime]
+    end: Mapped[DateTime] = mapped_column(nullable=True)
     timezone_offset: Mapped[int]
     score_state: Mapped[str| None] = mapped_column(String, nullable=True)
     strain: Mapped[float | None] = mapped_column(Float, nullable=True)
