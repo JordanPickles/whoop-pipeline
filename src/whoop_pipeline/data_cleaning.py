@@ -41,6 +41,7 @@ class WhoopDataCleaner():
             if col in df.columns:
                 df[col] = pd.to_datetime(df[col], errors='coerce')
         return df
+
     
     def coerce_integer(self, df:pd.DataFrame, columns:list) -> pd.DataFrame:
         """Converts specified columns to integer."""
@@ -99,7 +100,6 @@ class WhoopDataCleaner():
         df = self.rename_id_column(df, endpoint) 
         
         col_types = self.columns_by_type(model_class)
-
         df = self.coerce_datetime(df, col_types['datetime'])
         df = self.coerce_integer(df, col_types['integer'])
         df = self.coerce_float(df, col_types['float'])
@@ -107,7 +107,7 @@ class WhoopDataCleaner():
         df = self.coerce_boolean(df, col_types['boolean'])
 
         return df
-    
+
 if __name__ == '__main__':
     cleaner = WhoopDataCleaner()
     schema = cleaner.classify_sqla_type('workout')
