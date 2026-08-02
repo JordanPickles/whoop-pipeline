@@ -3,7 +3,7 @@ name: Run Whoop Docker Pipeline
 on:
     workflow_dispatch: {}
     schedule:
-        - cron: "0 15 * * *" # Runs daily at 15:00 UTC
+        - cron: "0 */2 * * *" # Runs every 2 hours, every day
     
 jobs:
     run:
